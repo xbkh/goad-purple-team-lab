@@ -118,7 +118,7 @@ Déroulé type d'un test d'intrusion interne (inspiré du PTES) :
 - **Rédaction du rapport** : jeudi 15 octobre
 - **Publication** : vendredi 16 octobre
 
-Sprint intensif sur une semaine (lundi 12 au vendredi 16 octobre) ; chaque phase s'enchaîne sur la suivante, sans marge entre les étapes.
+Semaine du lundi 12 au vendredi 16 octobre, à raison de \~4h/jour en parallèle d'autres obligations ; chaque phase s'enchaîne sur la suivante, avec peu de marge entre les étapes.
 
 ## Gestion de projet
 
@@ -130,11 +130,11 @@ Mini-Kanban (Backlog / En cours / Fait), suivi via GitHub Projects (ou Trello), 
 
 | Poste | Estimation |
 | --- | --- |
-| Temps (lab + attaque + rapport + rapports d'avancement) | \~45h sur 1 semaine (\~9h/jour, lundi-vendredi) |
+| Temps (lab + attaque + rapport + rapports d'avancement) | \~20h sur 1 semaine (\~4h/jour, lundi-vendredi) |
 | Outils et licences | 0 CHF (GOAD, Kali, Wazuh, KVM/QEMU : open-source) |
 | Infrastructure | 0 CHF (poste personnel, pas de cloud payant) |
 | Certification associée (hors périmètre direct) | eJPT \~200 CHF, non comptée dans ce budget |
-| **Total** | **\~45h de travail / 0 CHF de coût direct** |
+| **Total** | **\~20h de travail / 0 CHF de coût direct** |
 
 ### Rituels
 
@@ -150,6 +150,7 @@ Mini-Kanban (Backlog / En cours / Fait), suivi via GitHub Projects (ou Trello), 
 | Retard sur le déploiement GOAD (jour 1) | Moins de temps pour l'attaque | Basculer sur une version GOAD allégée si besoin |
 | Alertes Wazuh non déclenchées pour certaines techniques | Partie détection incomplète | Ajuster les règles, ou documenter l'absence de détection comme un finding |
 | Rapport pas terminé à temps | Livrable incomplet | Rédiger au fil de l'eau dès le mercredi |
+| Budget de \~4h/jour insuffisant face à l'ampleur du scénario | Phases écourtées ou périmètre réduit en cours de semaine | Prioriser la compromission du domaine et la détection ; réduire le nombre de techniques documentées si besoin |
 
 ### Backlog
 
