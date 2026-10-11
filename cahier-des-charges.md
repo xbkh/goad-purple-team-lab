@@ -111,14 +111,14 @@ Déroulé type d'un test d'intrusion interne (inspiré du PTES) :
 - Write-ups détaillés par vulnérabilité exploitée
 - Version publiée / anonymisée sur le portfolio (bilelka.com)
 
-## Planning (3 semaines)
+## Planning (1 semaine)
 
-- **Lab GOAD** : 10 au 16 octobre
-- **Test d'intrusion** : 17 au 23 octobre
-- **Rédaction du rapport** : 24 au 29 octobre
-- **Publication** : 30 octobre
+- **Lab GOAD** : lundi 12 octobre
+- **Test d'intrusion** : mardi 13 au mercredi 14 octobre
+- **Rédaction du rapport** : jeudi 15 octobre
+- **Publication** : vendredi 16 octobre
 
-Chaque phase démarre le lundi ; la publication clôt la dernière semaine.
+Sprint intensif sur une semaine (lundi 12 au vendredi 16 octobre) ; chaque phase s'enchaîne sur la suivante, sans marge entre les étapes.
 
 ## Gestion de projet
 
@@ -130,16 +130,16 @@ Mini-Kanban (Backlog / En cours / Fait), suivi via GitHub Projects (ou Trello), 
 
 | Poste | Estimation |
 | --- | --- |
-| Temps (lab + attaque + rapport + rapports d'avancement) | \~60h sur 3 semaines (\~20h/semaine) |
+| Temps (lab + attaque + rapport + rapports d'avancement) | \~45h sur 1 semaine (\~9h/jour, lundi-vendredi) |
 | Outils et licences | 0 CHF (GOAD, Kali, Wazuh, KVM/QEMU : open-source) |
 | Infrastructure | 0 CHF (poste personnel, pas de cloud payant) |
 | Certification associée (hors périmètre direct) | eJPT \~200 CHF, non comptée dans ce budget |
-| **Total** | **\~60h de travail / 0 CHF de coût direct** |
+| **Total** | **\~45h de travail / 0 CHF de coût direct** |
 
 ### Rituels
 
 - Point quotidien de 10 minutes : fait hier, prévu aujourd'hui, blocages
-- Bilan hebdomadaire : avancement réel vs planning, ajustement si besoin
+- Bilan à mi-parcours (mercredi 14 octobre) : avancement réel vs planning, ajustement si besoin
 - Rétrospective finale : ce qui a bien marché / ce qui serait à améliorer, à inclure dans le rapport
 
 ### Suivi des risques
@@ -147,29 +147,29 @@ Mini-Kanban (Backlog / En cours / Fait), suivi via GitHub Projects (ou Trello), 
 | Risque | Impact | Mitigation |
 | --- | --- | --- |
 | RAM insuffisante (16 Go) pour lab + Kali + Wazuh en simultané | Ralentissement, VM instables | Lancer le lab par sous-ensembles, limiter Wazuh à 2 Go |
-| Retard sur le déploiement GOAD (semaine 1) | Moins de temps pour l'attaque | Basculer sur une version GOAD allégée si besoin |
+| Retard sur le déploiement GOAD (jour 1) | Moins de temps pour l'attaque | Basculer sur une version GOAD allégée si besoin |
 | Alertes Wazuh non déclenchées pour certaines techniques | Partie détection incomplète | Ajuster les règles, ou documenter l'absence de détection comme un finding |
-| Rapport pas terminé à temps | Livrable incomplet | Rédiger au fil de l'eau dès la semaine 2 |
+| Rapport pas terminé à temps | Livrable incomplet | Rédiger au fil de l'eau dès le mercredi |
 
 ### Backlog
 
-| Tâche | Semaine | Statut |
+| Tâche | Jour | Statut |
 | --- | --- | --- |
-| Setup VM Kali + réseau libvirt | S1 | À faire |
-| Déploiement GOAD (Vagrant/Ansible) | S1 | À faire |
-| Installation Wazuh manager + agents | S1 | À faire |
-| Reconnaissance et cartographie BloodHound | S2 | À faire |
-| Exploitation et mouvement latéral | S2 | À faire |
-| Compromission domaine (DCSync) + corrélation Wazuh | S2 | À faire |
-| Script d'automatisation (Makefile) | S2-S3 | À faire |
-| Rédaction rapport + playbook détection | S3 | À faire |
-| Publication GitHub + portfolio | S3 | À faire |
+| Setup VM Kali + réseau libvirt | Lun 12 | À faire |
+| Déploiement GOAD (Vagrant/Ansible) | Lun 12 | À faire |
+| Installation Wazuh manager + agents | Lun 12 | À faire |
+| Reconnaissance et cartographie BloodHound | Mar 13 | À faire |
+| Exploitation et mouvement latéral | Mar 13 - Mer 14 | À faire |
+| Compromission domaine (DCSync) + corrélation Wazuh | Mer 14 | À faire |
+| Script d'automatisation (Makefile) | Lun 12 - Mar 13 | À faire |
+| Rédaction rapport + playbook détection | Jeu 15 | À faire |
+| Publication GitHub + portfolio | Ven 16 | À faire |
 
 ## Rapports d'avancement
 
 Gabarit utilisé pour chaque rapport envoyé au comité de pilotage (formateur) ; au moins 2 attendus sur la durée du PPE.
 
-### Rapport d'avancement n°1 — fin semaine 1 (16 octobre)
+### Rapport d'avancement n°1 — mi-parcours (mercredi 14 octobre)
 
 - **Avancement délai :** à compléter
 - **Avancement coût :** à compléter
@@ -177,7 +177,7 @@ Gabarit utilisé pour chaque rapport envoyé au comité de pilotage (formateur) 
 - **Risques actifs :** à compléter
 - **Décisions / points d'attention :** à compléter
 
-### Rapport d'avancement n°2 — fin semaine 2 (23 octobre)
+### Rapport d'avancement n°2 — clôture (vendredi 16 octobre)
 
 - **Avancement délai :** à compléter
 - **Avancement coût :** à compléter
@@ -187,7 +187,7 @@ Gabarit utilisé pour chaque rapport envoyé au comité de pilotage (formateur) 
 
 ## Gestion de l'aléa imprévu
 
-Le PPE prévoit un aléa injecté par le formateur en cours de semaine. En autonomie, le mécanisme suivant est utilisé pour rester dans l'esprit de l'exercice : tirage au sort d'un aléa parmi la liste ci-dessous, le mercredi de la semaine 2 (21 octobre).
+Le PPE prévoit un aléa injecté par le formateur en cours de semaine. En autonomie, le mécanisme suivant est utilisé pour rester dans l'esprit de l'exercice : tirage au sort d'un aléa parmi la liste ci-dessous, le mercredi de la semaine (14 octobre).
 
 **Aléas possibles :**
 
@@ -207,7 +207,7 @@ Le PPE prévoit un aléa injecté par le formateur en cours de semaine. En auton
 
 ## Bilan de clôture et retour d'expérience (REX)
 
-À rédiger en fin de semaine 3, une fois le projet clos.
+À rédiger en fin de semaine (vendredi 16 octobre), une fois le projet clos.
 
 - **Résultats obtenus vs objectifs initiaux :** à compléter
 - **Respect du délai / budget / qualité :** à compléter
