@@ -1,0 +1,26 @@
+name: goad-purple
+services:
+  manager:
+    image: wazuh/wazuh-manager@sha256:d2387a8304391600154c7b8604b390c8b798ec1403b5f1f707703bafdb230f84
+    container_name: goad-purple-wazuh
+    hostname: goad-manager
+    mem_limit: 1024m
+    cpus: 1.0
+    entrypoint: ["/bin/bash", "/goad/no-filebeat.sh"]
+    ports:
+      - "192.168.56.1:1514:1514/tcp"
+      - "192.168.56.1:1515:1515/tcp"
+    volumes:
+      - manager-etc:/var/ossec/etc
+      - manager-logs:/var/ossec/logs
+      - manager-queue:/var/ossec/queue
+      - manager-api:/var/ossec/api/configuration
+      - ./ossec.conf:/wazuh-config-mount/etc/ossec.conf:ro
+      - ./local_rules.xml:/wazuh-config-mount/etc/rules/local_rules.xml:ro
+      - ./secrets/authd.pass:/wazuh-config-mount/etc/authd.pass:ro
+      - ./no-filebeat.sh:/goad/no-filebeat.sh:ro
+volumes:
+  manager-etc:
+  manager-logs:
+  manager-queue:
+  manager-api:

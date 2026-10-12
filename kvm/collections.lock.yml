@@ -1,0 +1,21 @@
+collections:
+- name: ansible.mysql
+  version: 5.2.0
+- name: ansible.posix
+  version: 2.2.2
+- name: ansible.windows
+  version: 2.5.0
+- name: chocolatey.chocolatey
+  version: 1.6.0
+- name: community.crypto
+  version: 3.5.0
+- name: community.general
+  version: 13.5.0
+- name: community.library_inventory_filtering_v1
+  version: 1.1.5
+- name: community.mysql
+  version: 5.0.2
+- name: community.windows
+  version: 2.3.0
+- name: scicore.guacamole
+  version: 0.0.23

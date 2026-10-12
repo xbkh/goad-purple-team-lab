@@ -1,0 +1,38 @@
+# Adaptation locale ; les boxes locales doivent être converties et ajoutées avant `up`.
+Vagrant.configure('2') do |config|
+  config.vm.synced_folder '.', '/vagrant', disabled: true
+  config.vm.boot_timeout = 900
+  config.winrm.username = 'vagrant'
+  config.winrm.password = 'vagrant'
+  config.winrm.retry_limit = 60
+  config.winrm.retry_delay = 10
+  config.winrm.ssl_peer_verification = false
+
+  [['dc01', '192.168.56.30'], ['ws01', '192.168.56.31']].each do |name, ip|
+    config.vm.define name do |vm|
+      vm.vm.box = "goad-kvm/#{name}"
+      vm.vm.guest = :windows
+      vm.vm.communicator = 'winrm'
+      vm.vm.network :private_network, ip: ip,
+        libvirt__network_name: 'goad-purple-lab', libvirt__forward_mode: 'none',
+        libvirt__always_destroy: false
+      vm.vm.provider :libvirt do |lv|
+        lv.uri = 'qemu:///system'
+        lv.memory = Integer(ENV.fetch('GOAD_VM_MEMORY', '2048'))
+        lv.cpus = 2
+        # Same emulated controller family as the upstream Windows image.
+        lv.disk_bus = 'ide'
+        lv.disk_device = 'hda'
+        lv.nic_model_type = 'e1000'
+        lv.video_type = 'vga'
+        lv.management_network_name = 'goad-purple-mgmt'
+        lv.management_network_keep = true
+        lv.management_network_address = '192.168.57.0/24'
+        # Accès sortant temporaire pour l'installation ; à retirer avant les attaques.
+        lv.management_network_mode = File.exist?(File.join(__dir__, '.isolated')) ? 'none' : 'nat'
+      end
+      vm.vm.provision :shell, path: '../GOAD/vagrant/Install-WMF3Hotfix.ps1', privileged: false
+      vm.vm.provision :shell, path: '../GOAD/vagrant/ConfigureRemotingForAnsible.ps1', privileged: false
+    end
+  end
+end

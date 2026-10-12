@@ -50,24 +50,24 @@ Laptop Asus TUF A15 (Ryzen 5 7000 series, 16 Go de RAM, \~200 Go de stockage dis
 
 - KVM/QEMU via libvirt (interface virt-manager) comme hyperviseur
 - Vagrant + plugin vagrant-libvirt + Ansible pour déployer GOAD
-- Dépôt : github.com/Orange-Cyberdefense/GOAD (provider libvirt)
-- Script Makefile pour automatiser le up/down du lab en une commande (objectif : redéploiement complet en moins de 15 minutes)
+- Dépôt officiel : github.com/Orange-Cyberdefense/GOAD ; adaptation libvirt locale dans `kvm/`, hors fournisseurs officiellement pris en charge
+- Script Makefile pour automatiser le up/down du lab en une commande (objectif à mesurer : redéploiement automatisé ; le premier déploiement nécessite le téléchargement et la conversion des images)
 
 ### Lab GOAD
 
-- Variante GOAD classique : domaine Windows avec configurations volontairement faibles (ACL, délégation, GPP, etc.)
-- Machines : un contrôleur de domaine + plusieurs postes/serveurs membres
+- Variante retenue au démarrage : MINILAB, un domaine `mini.lab` avec un contrôleur de domaine et un poste Windows ; configurations volontairement vulnérables du scénario officiel
+- Machines : DC01 (Windows Server 2019) et WS01 (Windows 10), avec 2 Go de RAM et 2 vCPU chacun, à ajuster si le provisionnement le nécessite
 - Avec 16 Go de RAM au total, compter environ 2 Go par VM Windows et lancer le lab par sous-ensembles plutôt que toutes les machines en même temps
 
 ### Machine d'attaque
 
-- Kali Linux (dernière version stable), en VM
-- Allocation : 2 vCPU / 4 Go RAM / 40 Go disque
+- Au démarrage : outils de pentest sur l'hôte Pop!_OS, avec Impacket et LDAP dans un environnement Python local au projet
+- Une VM Kali reste une évolution possible ; elle est reportée pour conserver la mémoire nécessaire aux deux VM Windows et à Wazuh
 
 ### Réseau
 
-- Réseau virtuel libvirt isolé (NAT ou réseau interne via virt-manager), sans accès vers l'extérieur
-- Un seul segment partagé entre Kali et les machines GOAD
+- Réseau du domaine libvirt isolé ; réseau NAT séparé uniquement pendant le provisionnement, puis retrait du NAT et du relais DNS extérieur avant les attaques
+- Segment du domaine partagé entre les outils sur l'hôte et les deux machines Windows ; réseau de gestion distinct pendant le provisionnement
 
 ### Boîte à outils par phase
 
@@ -82,10 +82,10 @@ Laptop Asus TUF A15 (Ryzen 5 7000 series, 16 Go de RAM, \~200 Go de stockage dis
 
 ### Supervision / détection
 
-- Wazuh manager déployé en VM légère (1 vCPU / 2 Go RAM) à côté du lab GOAD
-- Agents Wazuh (ou Sysmon + Winlogbeat) installés sur les hôtes Windows du domaine pour forwarder les logs
+- Wazuh manager 4.14.0 déployé en conteneur Docker, limité à 1 CPU / 1 Go RAM ; collecte et alertes JSON, sans indexeur ni tableau de bord
+- Agents Wazuh 4.14.0 prévus sur les deux hôtes Windows pour transmettre directement les événements Security, System et PowerShell ; scripts d'installation préparés, collecte réelle à valider
 - Pour chaque technique attaquée : vérifier et documenter l'alerte ou la trace générée côté Wazuh (approche purple team)
-- Lancé uniquement pendant les phases d'attaque pour rester dans le budget de 16 Go de RAM
+- Manager démarré dès la préparation ; limite de 1 Go de RAM pour conserver la collecte pendant le provisionnement et les phases d'attaque
 
 ## Méthodologie
 
@@ -100,7 +100,7 @@ Déroulé type d'un test d'intrusion interne (inspiré du PTES) :
 7. Nettoyage et consignation des preuves
 8. Corrélation des alertes et traces générées côté Wazuh pour chaque technique (approche purple team)
 
-**Outils principaux :** BloodHound, Impacket, CrackMapExec, Mimikatz, Rubeus, Nmap, Wazuh (détection), Sysmon + Winlogbeat (forwarding des logs).
+**Outils principaux :** BloodHound, Impacket, CrackMapExec, Mimikatz, Rubeus, Nmap, Wazuh (détection), agents Wazuh (collecte native des événements Windows).
 
 ## Livrables
 
@@ -146,7 +146,7 @@ Mini-Kanban (Backlog / En cours / Fait), suivi via GitHub Projects (ou Trello), 
 
 | Risque | Impact | Mitigation |
 | --- | --- | --- |
-| RAM insuffisante (16 Go) pour lab + Kali + Wazuh en simultané | Ralentissement, VM instables | Lancer le lab par sous-ensembles, limiter Wazuh à 2 Go |
+| RAM insuffisante (16 Go) pour lab + Kali + Wazuh en simultané | Ralentissement, VM instables | Lancer le lab par sous-ensembles, limiter le manager Wazuh à 1 Go |
 | Retard sur le déploiement GOAD (jour 1) | Moins de temps pour l'attaque | Basculer sur une version GOAD allégée si besoin |
 | Alertes Wazuh non déclenchées pour certaines techniques | Partie détection incomplète | Ajuster les règles, ou documenter l'absence de détection comme un finding |
 | Rapport pas terminé à temps | Livrable incomplet | Rédiger au fil de l'eau dès le mercredi |
@@ -156,13 +156,13 @@ Mini-Kanban (Backlog / En cours / Fait), suivi via GitHub Projects (ou Trello), 
 
 | Tâche | Jour | Statut |
 | --- | --- | --- |
-| Setup VM Kali + réseau libvirt | Lun 12 | À faire |
-| Déploiement GOAD (Vagrant/Ansible) | Lun 12 | À faire |
-| Installation Wazuh manager + agents | Lun 12 | À faire |
+| Outils d'attaque sur l'hôte + réseau libvirt isolé | Lun 12 | Fait |
+| Déploiement MINILAB (Vagrant/libvirt + Ansible) | Lun 12 | En cours |
+| Installation Wazuh manager + agents | Lun 12 | Manager démarré ; agents à installer |
 | Reconnaissance et cartographie BloodHound | Mar 13 | À faire |
 | Exploitation et mouvement latéral | Mar 13 - Mer 14 | À faire |
 | Compromission domaine (DCSync) + corrélation Wazuh | Mer 14 | À faire |
-| Script d'automatisation (Makefile) | Lun 12 - Mar 13 | À faire |
+| Scripts d'automatisation et Makefile | Lun 12 - Mar 13 | Préparés ; validation du déploiement en cours |
 | Rédaction rapport + playbook détection | Jeu 15 | À faire |
 | Publication GitHub + portfolio | Ven 16 | À faire |
 

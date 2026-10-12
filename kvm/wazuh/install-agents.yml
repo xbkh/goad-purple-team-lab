@@ -1,0 +1,55 @@
+- name: Collect Windows events in the isolated GOAD lab
+  hosts: domain
+  gather_facts: false
+  tasks:
+    - name: Create staging folder
+      ansible.windows.win_file:
+        path: C:\goad-monitoring
+        state: directory
+    - name: Copy matching Wazuh installer
+      ansible.windows.win_copy:
+        src: agent.msi
+        dest: C:\goad-monitoring\wazuh-agent.msi
+    - name: Install Wazuh agent
+      ansible.windows.win_package:
+        path: C:\goad-monitoring\wazuh-agent.msi
+        arguments: /qn WAZUH_MANAGER=192.168.56.1
+        state: present
+    - name: Set enrollment password
+      ansible.windows.win_copy:
+        src: secrets/authd.pass
+        dest: C:\Program Files (x86)\ossec-agent\authd.pass
+      no_log: true
+    - name: Configure event collection
+      ansible.windows.win_copy:
+        src: agent-ossec.conf
+        dest: C:\Program Files (x86)\ossec-agent\ossec.conf
+    - name: Enable authentication and process audit using locale independent GUIDs
+      ansible.windows.win_shell: |
+        auditpol /set /subcategory:"{0cce9215-69ae-11d9-bed3-505054503030}" /success:enable /failure:enable
+        if ($LASTEXITCODE -ne 0) { throw 'Logon audit failed' }
+        auditpol /set /subcategory:"{0cce922b-69ae-11d9-bed3-505054503030}" /success:enable /failure:enable
+        if ($LASTEXITCODE -ne 0) { throw 'Process creation audit failed' }
+        New-Item -Path 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\Audit' -Force | Out-Null
+        New-ItemProperty -Path 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\Audit' -Name ProcessCreationIncludeCmdLine_Enabled -Value 1 -PropertyType DWord -Force
+        New-Item -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\PowerShell\ScriptBlockLogging' -Force | Out-Null
+        New-ItemProperty -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\PowerShell\ScriptBlockLogging' -Name EnableScriptBlockLogging -Value 1 -PropertyType DWord -Force
+    - name: Enable directory service auditing and replication SACL on the lab domain
+      ansible.windows.win_shell: |
+        auditpol /set /subcategory:"{0cce923b-69ae-11d9-bed3-505054503030}" /success:enable /failure:enable
+        if ($LASTEXITCODE -ne 0) { throw 'Directory service access audit failed' }
+        Import-Module ActiveDirectory
+        $path = 'AD:\DC=mini,DC=lab'
+        $acl = Get-Acl $path -Audit
+        $sid = [System.Security.Principal.SecurityIdentifier]::new('S-1-1-0')
+        foreach ($guid in @('1131f6aa-9c07-11d1-f79f-00c04fc2dcd2', '1131f6ad-9c07-11d1-f79f-00c04fc2dcd2', '89e95b76-444d-4c62-991a-0facbeda640c')) {
+          $rule = [System.DirectoryServices.ActiveDirectoryAuditRule]::new($sid, [System.DirectoryServices.ActiveDirectoryRights]::ExtendedRight, [System.Security.AccessControl.AuditFlags]::Success, [Guid]$guid)
+          $acl.AddAuditRule($rule)
+        }
+        Set-Acl -Path $path -AclObject $acl
+      when: inventory_hostname == 'dc01'
+    - name: Start event collection
+      ansible.windows.win_service:
+        name: WazuhSvc
+        state: restarted
+        start_mode: auto

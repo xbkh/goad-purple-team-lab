@@ -1,0 +1,1 @@
+{"win":{"system":{"providerName":"Microsoft-Windows-Security-Auditing","eventID":"4625","channel":"Security","computer":"dc.mini.lab","severityValue":"AUDIT_FAILURE","message":"Synthetic rule validation, not an attack result"},"eventdata":{"targetUserName":"goad-test","ipAddress":"192.168.56.1","logonType":"3"}}}

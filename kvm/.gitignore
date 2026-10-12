@@ -1,0 +1,13 @@
+cache/
+.venv/
+collections/
+roles/
+__pycache__/
+logs/
+.ansible-tmp/
+.isolated
+.vagrant/
+.vagrant-home/
+*.box
+*.qcow2
+*.partial

@@ -1,0 +1,16 @@
+GOAD/
+kvm/cache/
+kvm/.venv/
+kvm/collections/
+kvm/roles/
+kvm/logs/
+kvm/.ansible-tmp/
+kvm/.vagrant/
+kvm/.vagrant-home/
+kvm/.isolated
+kvm/wazuh/secrets/
+kvm/wazuh/agent.msi
+*.box
+*.qcow2
+*.partial
+__pycache__/
