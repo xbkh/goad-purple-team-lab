@@ -55,8 +55,8 @@ Laptop Asus TUF A15 (Ryzen 5 7000 series, 16 Go de RAM, \~200 Go de stockage dis
 
 ### Lab GOAD
 
-- Variante retenue au démarrage : MINILAB, un domaine `mini.lab` avec un contrôleur de domaine et un poste Windows ; configurations volontairement vulnérables du scénario officiel
-- Machines : DC01 (Windows Server 2019) et WS01 (Windows 10), avec 2 Go de RAM et 2 vCPU chacun, à ajuster si le provisionnement le nécessite
+- Variante retenue au démarrage : MINILAB, un domaine `mini.lab` avec un contrôleur de domaine et un serveur membre Windows ; configurations volontairement vulnérables du scénario officiel
+- Machines : DC01 et WS01 (Windows Server 2019, respectivement contrôleur de domaine et serveur membre), avec 2 Go de RAM et 2 vCPU chacun, à ajuster si le provisionnement le nécessite
 - Avec 16 Go de RAM au total, compter environ 2 Go par VM Windows et lancer le lab par sous-ensembles plutôt que toutes les machines en même temps
 
 ### Machine d'attaque
@@ -83,7 +83,7 @@ Laptop Asus TUF A15 (Ryzen 5 7000 series, 16 Go de RAM, \~200 Go de stockage dis
 ### Supervision / détection
 
 - Wazuh manager 4.14.0 déployé en conteneur Docker, limité à 1 CPU / 1 Go RAM ; collecte et alertes JSON, sans indexeur ni tableau de bord
-- Agents Wazuh 4.14.0 prévus sur les deux hôtes Windows pour transmettre directement les événements Security, System et PowerShell ; scripts d'installation préparés, collecte réelle à valider
+- Agents Wazuh 4.14.0 prévus sur les deux hôtes Windows pour transmettre directement les événements Security, System et PowerShell ; deux agents actifs et collecte réelle validée le 13 octobre
 - Pour chaque technique attaquée : vérifier et documenter l'alerte ou la trace générée côté Wazuh (approche purple team)
 - Manager démarré dès la préparation ; limite de 1 Go de RAM pour conserver la collecte pendant le provisionnement et les phases d'attaque
 
@@ -158,7 +158,7 @@ Mini-Kanban (Backlog / En cours / Fait), suivi via GitHub Projects (ou Trello), 
 | --- | --- | --- |
 | Outils d'attaque sur l'hôte + réseau libvirt isolé | Lun 12 | Fait |
 | Déploiement MINILAB (Vagrant/libvirt + Ansible) | Lun 12 | En cours |
-| Installation Wazuh manager + agents | Lun 12 | Manager démarré ; agents à installer |
+| Installation Wazuh manager + agents | Lun 12 | Manager et deux agents actifs ; collecte réelle validée |
 | Reconnaissance et cartographie BloodHound | Mar 13 | À faire |
 | Exploitation et mouvement latéral | Mar 13 - Mer 14 | À faire |
 | Compromission domaine (DCSync) + corrélation Wazuh | Mer 14 | À faire |

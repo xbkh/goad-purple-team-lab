@@ -8,7 +8,6 @@ import urllib.request
 ROOT = Path(__file__).resolve().parents[1]
 BOXES = [
     ('dc01', 'windows_server2019', '2023.10.19', 'sha256', 'a2825bcec954bfe2f8e34240846773ef3bc23114f178878995f01c90afe0908c'),
-    ('ws01', 'windows10', '2024.01.06', 'md5', '722d8592a4007413523f1fbcbde8ac33'),
 ]
 
 def download(name, box, version, algorithm, expected):

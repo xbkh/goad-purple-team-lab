@@ -17,7 +17,7 @@ while [[ ! -f "$root/cache/dc01.boot-ok" || ! -f "$root/cache/ws01.boot-ok" ]]; 
   sleep 20
 done
 printf 'Provisionnement du domaine en cours\n' > "$root/logs/setup-status.txt"
-bash "$root/scripts/provision.sh"
+bash "$root/scripts/provision.sh" "$@"
 printf 'Installation des agents Wazuh en cours\n' > "$root/logs/setup-status.txt"
 export ANSIBLE_LOCAL_TEMP="$root/.ansible-tmp"
 export ANSIBLE_COLLECTIONS_PATH="$root/collections"
@@ -28,4 +28,5 @@ export ANSIBLE_CONFIG="$(dirname "$root")/GOAD/ansible/ansible.cfg"
 printf 'Isolation des réseaux et redémarrage du lab en cours\n' > "$root/logs/setup-status.txt"
 bash "$root/scripts/isolate.sh"
 python3 "$root/scripts/check-lab.py"
-printf 'Domaine provisionné, agents installés, réseaux isolés ; collecte réelle à vérifier avant les attaques\n' > "$root/logs/setup-status.txt"
+"$root/.venv/bin/python" "$root/scripts/validate-domain.py"
+printf 'Domaine validé, services Wazuh démarrés, réseaux isolés ; vérifier les événements réels avant les attaques\n' > "$root/logs/setup-status.txt"

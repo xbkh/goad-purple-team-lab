@@ -22,7 +22,9 @@ PY
   virsh -c qemu:///system net-start "$name"
 done
 touch "$root/.isolated"
-bash "$root/scripts/vagrant.sh" up dc01 ws01 --provider libvirt --no-provision
+# Start the DC first so the member can discover it during Netlogon startup.
+bash "$root/scripts/vagrant.sh" up dc01 --provider libvirt --no-provision
+bash "$root/scripts/vagrant.sh" up ws01 --provider libvirt --no-provision
 for name in goad-purple-mgmt goad-purple-lab; do
   virsh -c qemu:///system net-dumpxml "$name" > "$root/logs/$name-final.xml"
 done
