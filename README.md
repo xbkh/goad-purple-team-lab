@@ -1,37 +1,47 @@
-# GOAD Purple Team Lab — Cahier des charges
+# GOAD Purple Team Lab
 
-Projet personnel de pentest interne sur un lab Active Directory volontairement
-vulnérable ([GOAD](https://github.com/Orange-Cyberdefense/GOAD)), avec un
-volet détection (Wazuh) en parallèle de l'attaque (approche purple team).
+Projet personnel de test d'intrusion sur un environnement Active Directory
+volontairement vulnérable ([GOAD](https://github.com/Orange-Cyberdefense/GOAD)).
+Wazuh sert à observer les traces des tests et à vérifier leur détection.
 
 Ce projet sert aussi de rendu PPE pour le cours *Techniques de gestion de
-projets* (référence CFC 306, Projet 5 — pilotage complet d'un mini-projet de
-bout en bout).
+projets* (CFC 306, Projet 5).
 
-Le cahier des charges complet (contexte, périmètre, environnement technique,
-méthodologie, planning, gestion de projet, gestion de l'aléa, bilan/REX) est
-dans [`cahier-des-charges.md`](./cahier-des-charges.md).
+## Où en est le projet ?
 
-## Démarrage — semaine du 12 au 16 octobre 2026
+**Dernière mise à jour : 13 octobre 2026. Le lab est prêt pour les tests.**
 
-Budget : environ 20 heures, soit 4 heures par jour.
+| Étape | Avancement |
+| --- | --- |
+| Installer le lab et son réseau isolé | Terminé et vérifié |
+| Installer Wazuh et recevoir les événements des deux machines | Terminé et vérifié |
+| Réaliser le test d'intrusion | À faire — prochaine étape |
+| Vérifier la détection de chaque technique d'attaque | À faire |
+| Tester la reconstruction complète du lab | À faire |
+| Rédiger le rapport et le bilan, puis publier sur le portfolio | À faire |
 
-Le projet démarre avec **MINILAB sur KVM/libvirt** (un contrôleur de domaine et
-un serveur membre Windows), adapté localement aux ressources du poste. Les outils de
-pentest sont installés dans un environnement Python sur l'hôte pour économiser
-la mémoire. Le manager Wazuh fonctionne en conteneur, avec alertes JSON et sans
-indexeur ni tableau de bord.
+Les événements reçus jusqu'ici proviennent de la préparation et des contrôles.
+Aucune compromission du domaine n'est encore revendiquée.
 
-- [Préparation et commandes](./kvm/README.md)
-- [Scénario de test](./kvm/SCENARIO.md)
-- [Journal de démarrage et limites actuelles](./docs/journal-demarrage.md)
+**[Lire le suivi du projet : réalisations, difficultés et prochaines étapes](./SUIVI.md)**
 
-**État vérifié le 13 octobre :** DC01 et WS01 sous Server 2019 sont dans
-`mini.lab`, avec une relation d'approbation valide. Les deux agents Wazuh sont
-actifs et transmettent des événements réels. Les deux réseaux libvirt sont isolés,
-sans transfert extérieur ni relais DNS.
+## Planning
 
-- [Contrôles réalisés et limites](./docs/validation-lab-2026-10-13.md)
+Du **12 au 16 octobre 2026**, avec un budget prévisionnel d'environ
+**20 heures au total, soit 4 heures par jour**.
+La préparation a débordé sur le 13 octobre ; le temps de travail réel reste à consigner.
 
-Le redéploiement complet depuis zéro et les techniques d'attaque restent à valider.
-Aucun résultat de compromission n'est revendiqué à ce stade.
+## Documents
+
+- [Cahier des charges](./cahier-des-charges.md) : objectifs, périmètre, planning et gestion du projet.
+- [Scénario de test](./kvm/SCENARIO.md) : tests prévus et détections à vérifier.
+- [Validation du lab](./docs/validation-lab-2026-10-13.md) : contrôles réalisés le 13 octobre.
+- [Installation et commandes](./kvm/README.md) : utilisation technique du lab.
+- [Journal technique](./docs/journal-demarrage.md) : détail des problèmes et des corrections.
+
+## Environnement retenu
+
+MINILAB adapté à KVM/libvirt : un contrôleur de domaine et un serveur membre,
+tous deux sous Windows Server 2019. Les outils d'attaque sont sur l'hôte.
+Wazuh reçoit les événements des deux machines, sans tableau de bord ni indexeur.
+Les deux réseaux du lab sont isolés.

@@ -154,17 +154,19 @@ Mini-Kanban (Backlog / En cours / Fait), suivi via GitHub Projects (ou Trello), 
 
 ### Backlog
 
+Le résumé accessible et le suivi daté sont dans [SUIVI.md](./SUIVI.md).
+
 | Tâche | Jour | Statut |
 | --- | --- | --- |
 | Outils d'attaque sur l'hôte + réseau libvirt isolé | Lun 12 | Fait |
-| Déploiement MINILAB (Vagrant/libvirt + Ansible) | Lun 12 | En cours |
+| Déploiement MINILAB (Vagrant/libvirt + Ansible) | Lun 12 | Terminé et vérifié le 13 octobre |
 | Installation Wazuh manager + agents | Lun 12 | Manager et deux agents actifs ; collecte réelle validée |
 | Reconnaissance et cartographie BloodHound | Mar 13 | À faire |
 | Exploitation et mouvement latéral | Mar 13 - Mer 14 | À faire |
 | Compromission domaine (DCSync) + corrélation Wazuh | Mer 14 | À faire |
-| Scripts d'automatisation et Makefile | Lun 12 - Mar 13 | Préparés ; validation du déploiement en cours |
+| Scripts d'automatisation et Makefile | Lun 12 - Mar 13 | Utilisés pour le premier déploiement ; reconstruction complète à vérifier |
 | Rédaction rapport + playbook détection | Jeu 15 | À faire |
-| Publication GitHub + portfolio | Ven 16 | À faire |
+| Publication GitHub + portfolio | Ven 16 | Dépôt et suivi publiés ; livrables finaux et portfolio à faire |
 
 ## Rapports d'avancement
 
