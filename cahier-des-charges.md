@@ -154,7 +154,7 @@ Mini-Kanban (Backlog / En cours / Fait), suivi via GitHub Projects (ou Trello), 
 
 ### Backlog
 
-Le résumé accessible et le suivi daté sont dans [SUIVI.md](./SUIVI.md).
+Le suivi daté, les résultats et toutes les captures sont réunis dans le [README principal](./README.md#journal-et-captures-décran).
 
 | Tâche | Jour | Statut |
 | --- | --- | --- |
@@ -180,7 +180,7 @@ Gabarit utilisé pour chaque rapport envoyé au comité de pilotage (formateur) 
 - **Risques actifs :** délai restant court, temps réel non mesuré, couverture des techniques encore partielle, reconstruction complète du lab non vérifiée.
 - **Décisions / points d'attention :** prioriser un scénario court avec preuves et traces ; signaler l'utilisation des identifiants initiaux du scénario ; conserver les secrets et journaux bruts hors du dépôt public.
 
-[Compte rendu de la séance et prochaines étapes](./docs/seance-2026-10-14.md).
+[Compte rendu du mercredi et prochaines étapes](./README.md#mercredi-14-octobre--premiers-tests).
 
 ### Rapport d'avancement n°2 — clôture (vendredi 16 octobre)
 
