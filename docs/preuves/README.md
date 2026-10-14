@@ -2,7 +2,18 @@
 
 [← Suivi du projet](../../SUIVI.md)
 
-**Six captures ajoutées le 14 octobre 2026.**
+## Captures directes dans les VM
+
+**[Ouvrir les quatre captures des logiciels Windows — 14 octobre](./2026-10-14/captures-directes/README.md)**
+
+Active Directory sur DC01, appartenance de WS01 au domaine, PowerShell et
+service Wazuh dans le gestionnaire des services. Chaque image possède une
+légende, une date et une limite d’interprétation.
+
+## Archives et résultats conservés par journée
+
+Les six images ci-dessous montrent un lecteur de traces, distinct des captures
+directes des VM accessibles ci-dessus.
 
 Les images sont de véritables captures d'un **lecteur local de traces**.
 Elles montrent des extraits de résultats conservés, avec leur source et leur
@@ -17,7 +28,7 @@ La date de la journée et celle de la capture sont affichées séparément.
 | --- | --- | --- |
 | [Lundi 12 octobre](./2026-10-12/README.md) | Installation de l'agent DC01 et événements Wazuh réels | Lecture rétrospective, capturée le 14 |
 | [Mardi 13 octobre](./2026-10-13/README.md) | Installation des deux agents, isolation et services accessibles | Lecture rétrospective, capturée le 14 |
-| [Mercredi 14 octobre](./2026-10-14/README.md) | Scan Nmap, connexion de bob et alerte Wazuh, domaine et agents, correction des horloges | Traces et contrôles du 14, capturés le 14 |
+| [Mercredi 14 octobre](./2026-10-14/README.md) | Quatre captures directes des VM ; scan Nmap, connexion de bob et alerte Wazuh, domaine et agents, horloges | Fenêtres Windows et lecture des traces du 14, distinguées dans la galerie |
 | Jeudi 15 octobre | À ajouter lors de la séance | Pas de preuve publiée à ce jour |
 | Vendredi 16 octobre | À ajouter lors de la séance | Pas de preuve publiée à ce jour |
 

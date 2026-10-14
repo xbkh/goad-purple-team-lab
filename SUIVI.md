@@ -18,9 +18,12 @@ fiable de ce temps.
 
 ## Captures et preuves
 
-[Galerie des preuves par jour](./docs/preuves/README.md). Les captures ont été
-réalisées le 14 ; celles des 12 et 13 montrent la lecture des traces conservées,
-avec cette limite indiquée sur les images.
+**[Captures directes des VM : Active Directory, PowerShell et service Wazuh](./docs/preuves/2026-10-14/captures-directes/README.md).**
+Quatre fenêtres réelles capturées le 14 octobre pendant les vérifications.
+
+[Galerie de toutes les preuves par jour](./docs/preuves/README.md). Pour les
+12 et 13, seules les traces conservées et leur lecture rétrospective sont
+disponibles ; aucune capture originale des fenêtres n’a été conservée.
 
 ## Ce qui a été réalisé
 
@@ -49,13 +52,14 @@ le 13 octobre vers 09:41, heure de Zurich.
 
 ### Mercredi 14 octobre — reconnaissance et premier constat
 
-[Voir les quatre preuves de cette journée](./docs/preuves/2026-10-14/README.md).
+[Voir les captures directes et les résultats de cette journée](./docs/preuves/2026-10-14/README.md).
 
 - Lab redémarré et contrôlé : deux machines et deux agents opérationnels.
 - Douze ports TCP examinés sur chaque machine.
 - Lecture guidée de l'annuaire avec `dave` : mot de passe de `bob` exposé dans sa description.
 - Connexion SMB comme `bob` réussie et événement 4624 / règle Wazuh 100101 corrélés.
 - Mot de passe et journaux bruts conservés hors du dépôt public.
+- Quatre captures directes ajoutées : annuaire Active Directory, contrôleur de domaine, contrôles PowerShell et service Wazuh dans Windows.
 - Dossier de preuves visuelles ajouté ; horloges Windows contrôlées et corrigées après détection d’un décalage de sept heures.
 
 [Compte rendu simple de la séance et travail personnel](./docs/seance-2026-10-14.md).

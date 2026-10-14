@@ -26,7 +26,9 @@ Aucune compromission du domaine n'est encore revendiquée.
 
 **[Lire le suivi du projet : réalisations, difficultés et prochaines étapes](./SUIVI.md)**
 
-**[Voir les captures et les preuves, classées par jour](./docs/preuves/README.md)**
+**[Voir les captures directes des VM : Active Directory et Wazuh](./docs/preuves/2026-10-14/captures-directes/README.md)**
+
+[Retrouver toutes les preuves, classées par jour](./docs/preuves/README.md).
 
 ## Planning
 

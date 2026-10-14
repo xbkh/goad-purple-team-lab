@@ -2,7 +2,16 @@
 
 [← Toutes les journées](../README.md) · [Suivi du projet](../../../SUIVI.md)
 
-**Captures du lecteur réalisées le 14 octobre, à partir des tests et contrôles du même jour.**
+## Fenêtres réelles des VM
+
+**[Voir les quatre captures directes : Active Directory, PowerShell et service Wazuh](./captures-directes/README.md)**
+
+Ces captures ont été réalisées pendant les vérifications du 14 octobre.
+
+## Résultats conservés, présentés dans un lecteur
+
+Les quatre images suivantes montrent la lecture des traces du même jour.
+Elles sont distinctes des captures directes des VM liées ci-dessus.
 
 ## 14 octobre — reconnaissance des deux machines
 

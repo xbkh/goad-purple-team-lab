@@ -1,0 +1,42 @@
+{
+  "date": "2026-10-14",
+  "timezone_timestamps": "UTC",
+  "captures": [
+    {
+      "file": "01-dc01-active-directory.jpg",
+      "vm": "kvm_dc01",
+      "application": "Active Directory Users and Computers",
+      "view": "mini.lab / Computers / WS",
+      "captured_at": "2026-10-14T07:27:03.304Z",
+      "sha256": "01ad6ed306a8c2e0ab8416c574ba0750e3befed0c9768c1ff5316a46a8aa21b3",
+      "capture_method": "Console réelle de la VM, noVNC, capture du navigateur sans retouche"
+    },
+    {
+      "file": "02-dc01-controleur-domaine.jpg",
+      "vm": "kvm_dc01",
+      "application": "Active Directory Users and Computers",
+      "view": "mini.lab / Domain Controllers / DC",
+      "captured_at": "2026-10-14T07:30:09.287Z",
+      "sha256": "cfb4c87247a9c440127d016146248c0b4fe9ecdf7b5dad2d32fc7700b9e03686",
+      "capture_method": "Console réelle de la VM, noVNC, capture du navigateur sans retouche"
+    },
+    {
+      "file": "03-ws01-domaine-wazuh.jpg",
+      "vm": "kvm_ws01",
+      "application": "Windows PowerShell",
+      "view": "Appartenance mini.lab et service Wazuh Running",
+      "captured_at": "2026-10-14T07:30:52.769Z",
+      "sha256": "8ef8e3a32e8ff22bf040632d3cc9a8552fb16be34b871b19f7d135c8cd6455a7",
+      "capture_method": "Console réelle de la VM, noVNC, capture du navigateur sans retouche"
+    },
+    {
+      "file": "04-ws01-services-wazuh.jpg",
+      "vm": "kvm_ws01",
+      "application": "Services Windows",
+      "view": "Wazuh Windows Agent Running / Automatic",
+      "captured_at": "2026-10-14T07:31:09.700Z",
+      "sha256": "27c436ca900b3999ede15f0444cd324dd55629e0898d9679a756ffdf998c4e45",
+      "capture_method": "Console réelle de la VM, noVNC, capture du navigateur sans retouche"
+    }
+  ]
+}
