@@ -26,6 +26,8 @@ Aucune compromission du domaine n'est encore revendiquée.
 
 **[Lire le suivi du projet : réalisations, difficultés et prochaines étapes](./SUIVI.md)**
 
+**[Voir les captures et les preuves, classées par jour](./docs/preuves/README.md)**
+
 ## Planning
 
 Du **12 au 16 octobre 2026**, avec un budget prévisionnel d'environ

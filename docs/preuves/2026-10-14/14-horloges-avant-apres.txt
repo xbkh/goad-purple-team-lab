@@ -1,0 +1,36 @@
+Avant correction : heure hôte et heures Windows
+{
+  "host_utc": "2026-10-14T06:57:11.318631+00:00",
+  "guests": {
+    "dc01": {
+      "timezone": "Pacific Standard Time",
+      "utc": "2026-10-14T13:57:11.5885740Z"
+    },
+    "ws01": {
+      "timezone": "UTC",
+      "utc": "2026-10-14T13:57:12.3748112Z"
+    }
+  }
+}
+
+Après correction : nouvelle lecture indépendante
+{
+  "operation": "Synchronize lab Windows clocks to host UTC",
+  "before_source": "clock-check.json",
+  "hosts": {
+    "dc01": {
+      "timezone": "UTC",
+      "utc": "2026-10-14T06:58:57.8283785Z",
+      "host_utc_after": "2026-10-14T06:58:59.376057+00:00",
+      "offset_seconds": -1.548,
+      "note": "Already aligned"
+    },
+    "ws01": {
+      "timezone": "UTC",
+      "utc": "2026-10-14T06:59:00.3131628Z",
+      "host_utc_after": "2026-10-14T06:59:00.837200+00:00",
+      "offset_seconds": -0.524,
+      "note": "Time change interrupted WinRM cleanup: WinRMTransportError"
+    }
+  }
+}

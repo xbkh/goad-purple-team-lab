@@ -28,3 +28,8 @@ alert-evidence.json dans kvm/logs. Aucun journal brut ni secret n'est publié.
 - Rapport, playbook de détection, bilans et retour d'expérience.
 - Validation du redéploiement complet depuis zéro ; aucun délai de 15 minutes
   n'est revendiqué.
+
+## Preuves visuelles
+
+[Capture des traces conservées du 13 octobre](./preuves/2026-10-13/README.md),
+réalisée le 14. Aucune capture originale du 13 n’a été conservée.

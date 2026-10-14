@@ -1,0 +1,192 @@
+{
+  "prepared_at": "2026-10-14T08:59:57+02:00",
+  "disclosure": "All browser screenshots taken on 2026-10-14. No original screenshots from 2026-10-12 or 2026-10-13 are available. Selected source excerpts are disclosed; no artificial terminal or Wazuh dashboard is shown.",
+  "items": [
+    {
+      "id": "12-collecte-wazuh",
+      "documented_day": "2026-10-12",
+      "capture_prepared_at": "2026-10-14T08:59:57+02:00",
+      "title": "12 octobre — installation et premiers événements",
+      "kind": "browser screenshot of disclosed evidence reader",
+      "sources": [
+        {
+          "file": "kvm/logs/wazuh-dc01.log",
+          "original_sha256": "cb0f40e8257613a7ae448db0eea20b09ae0552dc9e77ed44294c4f1a76352679",
+          "selection": "3 dernières lignes, sans ajout de résultat",
+          "local_private_snapshot": "kvm/logs/preuves-2026-10-14/originals/cb0f40e8257613a7ae448db0eea20b09ae0552dc9e77ed44294c4f1a76352679-wazuh-dc01.log"
+        },
+        {
+          "file": "kvm/logs/telemetry-validation.json",
+          "original_sha256": "17fc35b190c3cc6aeba998baa1d9412ea1b38fbbf1a5d4018531c3109fefea2d",
+          "selection": "JSON complet, sans secret",
+          "local_private_snapshot": "kvm/logs/preuves-2026-10-14/originals/17fc35b190c3cc6aeba998baa1d9412ea1b38fbbf1a5d4018531c3109fefea2d-telemetry-validation.json"
+        }
+      ],
+      "text_file": "12-collecte-wazuh.txt",
+      "image": "12-collecte-wazuh.jpg",
+      "image_sha256": "f604690bf67e572cd1877732bc017857c3a1654191cda5ebf99d90f73ae9ce0c",
+      "image_captured_at_utc": "2026-10-14T07:01:38.250226+00:00",
+      "image_dimensions": [
+        1239,
+        1214
+      ],
+      "text_sha256": "13bd9ff6f3c30617c06481c41cf4475922b29ac433c752c76042763c3428fc56",
+      "published_image": "2026-10-12/12-collecte-wazuh.jpg",
+      "published_text": "2026-10-12/12-collecte-wazuh.txt"
+    },
+    {
+      "id": "13-installation-isolation",
+      "documented_day": "2026-10-13",
+      "capture_prepared_at": "2026-10-14T08:59:57+02:00",
+      "title": "13 octobre — deux agents et réseaux isolés",
+      "kind": "browser screenshot of disclosed evidence reader",
+      "sources": [
+        {
+          "file": "kvm/logs/finish-setup.log",
+          "original_sha256": "3725ce79f2326f8c3902d8513592a6c9dae6e51e7a45f2b88f9f91fb28667705",
+          "selection": "lignes 136 à 145",
+          "local_private_snapshot": "kvm/logs/preuves-2026-10-14/originals/3725ce79f2326f8c3902d8513592a6c9dae6e51e7a45f2b88f9f91fb28667705-finish-setup.log"
+        },
+        {
+          "file": "kvm/logs/finish-setup.log",
+          "original_sha256": "3725ce79f2326f8c3902d8513592a6c9dae6e51e7a45f2b88f9f91fb28667705",
+          "selection": "fin du fichier à partir du résultat d’isolation",
+          "local_private_snapshot": "kvm/logs/preuves-2026-10-14/originals/3725ce79f2326f8c3902d8513592a6c9dae6e51e7a45f2b88f9f91fb28667705-finish-setup.log"
+        }
+      ],
+      "text_file": "13-installation-isolation.txt",
+      "image": "13-installation-isolation.jpg",
+      "image_sha256": "33a6082499403470cd1a8297453bc2001e18142e00e7c2349b6df93155299d59",
+      "image_captured_at_utc": "2026-10-14T07:01:46.644138+00:00",
+      "image_dimensions": [
+        1239,
+        1400
+      ],
+      "text_sha256": "43f201a84153e201a7913bf59b550fd6ab75a3c1ec54c33f2f4132c39f5b3364",
+      "published_image": "2026-10-13/13-installation-isolation.jpg",
+      "published_text": "2026-10-13/13-installation-isolation.txt"
+    },
+    {
+      "id": "14-reconnaissance",
+      "documented_day": "2026-10-14",
+      "capture_prepared_at": "2026-10-14T08:59:57+02:00",
+      "title": "14 octobre — reconnaissance des deux machines",
+      "kind": "browser screenshot of disclosed evidence reader",
+      "sources": [
+        {
+          "file": "kvm/logs/2026-10-14/recon.nmap",
+          "original_sha256": "a09c779735632155407aa42bc37a55b75484d35fe670f273b388c7e123bd4aa5",
+          "selection": "première ligne de commande et message publicitaire final retirés ; résultats inchangés",
+          "local_private_snapshot": "kvm/logs/preuves-2026-10-14/originals/a09c779735632155407aa42bc37a55b75484d35fe670f273b388c7e123bd4aa5-recon.nmap"
+        }
+      ],
+      "text_file": "14-reconnaissance.txt",
+      "image": "14-reconnaissance.jpg",
+      "image_sha256": "40d9020d1e0ca85d51c59a6fdb636c26ed4e56506b616db41c3017a17bad1d74",
+      "image_captured_at_utc": "2026-10-14T07:01:46.882140+00:00",
+      "image_dimensions": [
+        1239,
+        1341
+      ],
+      "text_sha256": "bcddb16af1adc05a4b9d1fcb95c2bcce1f09c0a7f7eb056bed13fc64c59b9205",
+      "published_image": "2026-10-14/14-reconnaissance.jpg",
+      "published_text": "2026-10-14/14-reconnaissance.txt"
+    },
+    {
+      "id": "14-compte-bob-et-alerte",
+      "documented_day": "2026-10-14",
+      "capture_prepared_at": "2026-10-14T08:59:57+02:00",
+      "title": "14 octobre — faiblesse confirmée et trace Wazuh",
+      "kind": "browser screenshot of disclosed evidence reader",
+      "sources": [
+        {
+          "file": "kvm/logs/2026-10-14/initial-enumeration.json",
+          "original_sha256": "ff29d5352d5fa6ba760e1199f4d7b19ae8a1b7b6fba12c1bcbee7f4dba7cbf81",
+          "selection": "champs de résultat ; seuls les comptes dave et bob sont affichés",
+          "local_private_snapshot": "kvm/logs/preuves-2026-10-14/originals/ff29d5352d5fa6ba760e1199f4d7b19ae8a1b7b6fba12c1bcbee7f4dba7cbf81-initial-enumeration.json"
+        },
+        {
+          "file": "kvm/logs/2026-10-14/initial-enumeration.json",
+          "original_sha256": "ff29d5352d5fa6ba760e1199f4d7b19ae8a1b7b6fba12c1bcbee7f4dba7cbf81",
+          "selection": "champ wazuh_smb_logon ; aucune donnée brute ajoutée",
+          "local_private_snapshot": "kvm/logs/preuves-2026-10-14/originals/ff29d5352d5fa6ba760e1199f4d7b19ae8a1b7b6fba12c1bcbee7f4dba7cbf81-initial-enumeration.json"
+        }
+      ],
+      "text_file": "14-compte-bob-et-alerte.txt",
+      "image": "14-compte-bob-et-alerte.jpg",
+      "image_sha256": "5fc4d277edb0462b0261eaa4b34e533ecb6c4bce9519db6b863669da3caf309f",
+      "image_captured_at_utc": "2026-10-14T07:01:30.929033+00:00",
+      "image_dimensions": [
+        1239,
+        1424
+      ],
+      "text_sha256": "a6ad79ec33171791e12ffcdc8edc5c79c4721163722ae327d5c697f905feafa5",
+      "published_image": "2026-10-14/14-compte-bob-et-alerte.jpg",
+      "published_text": "2026-10-14/14-compte-bob-et-alerte.txt"
+    },
+    {
+      "id": "14-domaine-et-agents",
+      "documented_day": "2026-10-14",
+      "capture_prepared_at": "2026-10-14T08:59:57+02:00",
+      "title": "14 octobre — domaine et supervision",
+      "kind": "browser screenshot of disclosed evidence reader",
+      "sources": [
+        {
+          "file": "kvm/logs/domain-validation.json",
+          "original_sha256": "fb5b80e676086cf9c2b83f8f13c75d82efccc003b1fa2995c3b553915c03a2e1",
+          "selection": "JSON complet sans secret",
+          "local_private_snapshot": "kvm/logs/preuves-2026-10-14/originals/fb5b80e676086cf9c2b83f8f13c75d82efccc003b1fa2995c3b553915c03a2e1-domain-validation.json"
+        },
+        {
+          "file": "kvm/logs/preuves-2026-10-14/agents-current.json",
+          "original_sha256": "a3865a45c04dc041624994d4d1dda557e64aded505a5910030db0b7d7c8d7b50",
+          "selection": "sortie agent_control complète et horodatage de collecte",
+          "local_private_snapshot": "kvm/logs/preuves-2026-10-14/originals/a3865a45c04dc041624994d4d1dda557e64aded505a5910030db0b7d7c8d7b50-agents-current.json"
+        }
+      ],
+      "text_file": "14-domaine-et-agents.txt",
+      "image": "14-domaine-et-agents.jpg",
+      "image_sha256": "679d066e663e0b13c5bea9cb2144ebc0837791e9598953349ea729dc7d3b72a9",
+      "image_captured_at_utc": "2026-10-14T07:01:31.159034+00:00",
+      "image_dimensions": [
+        1239,
+        1255
+      ],
+      "text_sha256": "68c24f367623d4d0c5f337c6aec1b9cd692b64653c74af9f413567bc2ab5553b",
+      "published_image": "2026-10-14/14-domaine-et-agents.jpg",
+      "published_text": "2026-10-14/14-domaine-et-agents.txt"
+    },
+    {
+      "id": "14-horloges-avant-apres",
+      "documented_day": "2026-10-14",
+      "capture_prepared_at": "2026-10-14T08:59:57+02:00",
+      "title": "14 octobre — horloges vérifiées et corrigées",
+      "kind": "browser screenshot of disclosed evidence reader",
+      "sources": [
+        {
+          "file": "kvm/logs/preuves-2026-10-14/clock-check.json",
+          "original_sha256": "0c2ffc947104522dc8fe3044156aa5ae9331409f5876b02dc0a0073a497cc950",
+          "selection": "JSON complet du contrôle initial",
+          "local_private_snapshot": "kvm/logs/preuves-2026-10-14/originals/0c2ffc947104522dc8fe3044156aa5ae9331409f5876b02dc0a0073a497cc950-clock-check.json"
+        },
+        {
+          "file": "kvm/logs/preuves-2026-10-14/clock-correction.json",
+          "original_sha256": "322e59c1ee39604485bcdf916b6863341cafa0d36da7f6d9799f509aaae30ac5",
+          "selection": "JSON complet du contrôle après correction",
+          "local_private_snapshot": "kvm/logs/preuves-2026-10-14/originals/322e59c1ee39604485bcdf916b6863341cafa0d36da7f6d9799f509aaae30ac5-clock-correction.json"
+        }
+      ],
+      "text_file": "14-horloges-avant-apres.txt",
+      "image": "14-horloges-avant-apres.jpg",
+      "image_sha256": "33e930fafaa48e16a1cee583aaec8605bb6366f430f1c3a84d350a3d4dad602f",
+      "image_captured_at_utc": "2026-10-14T07:01:38.045155+00:00",
+      "image_dimensions": [
+        1239,
+        1424
+      ],
+      "text_sha256": "6a66cffa740f545b237124340ea373d525af8f315ec78c0c8940deee60fb3afd",
+      "published_image": "2026-10-14/14-horloges-avant-apres.jpg",
+      "published_text": "2026-10-14/14-horloges-avant-apres.txt"
+    }
+  ]
+}

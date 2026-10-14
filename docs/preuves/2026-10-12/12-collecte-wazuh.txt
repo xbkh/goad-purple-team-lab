@@ -1,0 +1,27 @@
+Installation de l’agent DC01
+PLAY RECAP *********************************************************************
+dc01                       : ok=8    changed=8    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
+
+Événements enregistrés le 12 octobre
+{
+  "validation": "real_agent_events",
+  "results": [
+    {
+      "kind": "real_network_logon_during_setup",
+      "timestamp": "2026-10-12T12:34:52.214+0000",
+      "rule_id": "100101",
+      "event_id": "4624",
+      "decoder": "windows_eventchannel",
+      "agent_id": "001"
+    },
+    {
+      "kind": "controlled_real_authentication_failure",
+      "timestamp": "2026-10-12T12:36:29.122+0000",
+      "rule_id": "100100",
+      "event_id": "4625",
+      "decoder": "windows_eventchannel",
+      "agent_id": "001"
+    }
+  ],
+  "dcsync_rule": "not_yet_tested"
+}

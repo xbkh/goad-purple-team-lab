@@ -16,9 +16,17 @@ environ 4 h/jour**. Le temps de travail réel n'a pas encore été consigné ;
 les attentes de téléchargement et d'installation ne constituent pas une mesure
 fiable de ce temps.
 
+## Captures et preuves
+
+[Galerie des preuves par jour](./docs/preuves/README.md). Les captures ont été
+réalisées le 14 ; celles des 12 et 13 montrent la lecture des traces conservées,
+avec cette limite indiquée sur les images.
+
 ## Ce qui a été réalisé
 
 ### Lundi 12 octobre — préparer le lab
+
+[Voir la preuve de cette journée](./docs/preuves/2026-10-12/README.md).
 
 - Préparation des outils et des images Windows.
 - Mise en place du réseau et du serveur central du domaine Active Directory.
@@ -26,6 +34,8 @@ fiable de ce temps.
 - Vérification de la remontée d'une connexion réussie et d'un échec volontaire.
 
 ### Mardi 13 octobre — terminer et vérifier l'installation
+
+[Voir la preuve de cette journée](./docs/preuves/2026-10-13/README.md).
 
 - Mise en service de la seconde machine et rattachement au domaine.
 - Installation de son agent Wazuh : les deux machines transmettent des événements.
@@ -39,11 +49,14 @@ le 13 octobre vers 09:41, heure de Zurich.
 
 ### Mercredi 14 octobre — reconnaissance et premier constat
 
+[Voir les quatre preuves de cette journée](./docs/preuves/2026-10-14/README.md).
+
 - Lab redémarré et contrôlé : deux machines et deux agents opérationnels.
 - Douze ports TCP examinés sur chaque machine.
 - Lecture guidée de l'annuaire avec `dave` : mot de passe de `bob` exposé dans sa description.
 - Connexion SMB comme `bob` réussie et événement 4624 / règle Wazuh 100101 corrélés.
 - Mot de passe et journaux bruts conservés hors du dépôt public.
+- Dossier de preuves visuelles ajouté ; horloges Windows contrôlées et corrigées après détection d’un décalage de sept heures.
 
 [Compte rendu simple de la séance et travail personnel](./docs/seance-2026-10-14.md).
 Le mouvement latéral, DCSync et la cartographie complète restent à réaliser.

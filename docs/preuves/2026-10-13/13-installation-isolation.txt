@@ -1,0 +1,36 @@
+Installation des agents : résultat Ansible
+[started TASK: Start event collection on dc01]
+ [started TASK: Start event collection on ws01]
+
+TASK [Start event collection] **************************************************
+changed: [dc01]
+changed: [ws01]
+
+PLAY RECAP *********************************************************************
+dc01                       : ok=8    changed=3    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+ws01                       : ok=7    changed=4    unreachable=0    failed=0    skipped=1    rescued=0    ignored=0
+
+Isolation et accessibilité des services
+Deux réseaux libvirt sans transfert extérieur ni relais DNS
+{
+  "checked_at": "2026-10-13T07:37:36.779985+00:00",
+  "hosts": {
+    "dc01": {
+      "ip": "192.168.56.30",
+      "ports": {
+        "53": "open",
+        "88": "open",
+        "389": "open",
+        "445": "open",
+        "5985": "open"
+      }
+    },
+    "ws01": {
+      "ip": "192.168.56.31",
+      "ports": {
+        "445": "open",
+        "5985": "open"
+      }
+    }
+  }
+}

@@ -54,3 +54,9 @@ le démarrage simultané des deux VM. La découverte a été relancée sur WS01 
 la relation d'approbation est ensuite valide. Le démarrage isolé lance désormais
 DC01 avant WS01 et une validation explicite contrôle le nom, le domaine, le
 service Wazuh et la relation d'approbation.
+
+## Dossier de preuves visuelles
+
+Les [captures classées par jour](./preuves/README.md) ont été ajoutées le 14 octobre.
+Les vues des 12 et 13 sont des lectures rétrospectives des traces conservées,
+explicitement étiquetées. Les originaux locaux sont figés pour conserver leur provenance.
