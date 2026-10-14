@@ -161,8 +161,8 @@ Le résumé accessible et le suivi daté sont dans [SUIVI.md](./SUIVI.md).
 | Outils d'attaque sur l'hôte + réseau libvirt isolé | Lun 12 | Fait |
 | Déploiement MINILAB (Vagrant/libvirt + Ansible) | Lun 12 | Terminé et vérifié le 13 octobre |
 | Installation Wazuh manager + agents | Lun 12 | Manager et deux agents actifs ; collecte réelle validée |
-| Reconnaissance et cartographie BloodHound | Mar 13 | À faire |
-| Exploitation et mouvement latéral | Mar 13 - Mer 14 | À faire |
+| Reconnaissance et cartographie BloodHound | Mar 13 | Première reconnaissance réalisée le 14 ; cartographie BloodHound à faire |
+| Exploitation et mouvement latéral | Mar 13 - Mer 14 | Mot de passe exposé et connexion SMB vérifiés le 14 ; mouvement latéral à faire |
 | Compromission domaine (DCSync) + corrélation Wazuh | Mer 14 | À faire |
 | Scripts d'automatisation et Makefile | Lun 12 - Mar 13 | Utilisés pour le premier déploiement ; reconstruction complète à vérifier |
 | Rédaction rapport + playbook détection | Jeu 15 | À faire |
@@ -174,11 +174,13 @@ Gabarit utilisé pour chaque rapport envoyé au comité de pilotage (formateur) 
 
 ### Rapport d'avancement n°1 — mi-parcours (mercredi 14 octobre)
 
-- **Avancement délai :** à compléter
-- **Avancement coût :** à compléter
-- **Avancement qualité :** à compléter
-- **Risques actifs :** à compléter
-- **Décisions / points d'attention :** à compléter
+- **Avancement délai :** préparation terminée le 13 au lieu du 12 ; première reconnaissance et premier test guidé réalisés le 14. Les autres tests et les livrables restent à réaliser avant le 16.
+- **Avancement coût :** budget prévisionnel de 20 h / 0 CHF de coût direct. Le temps réel n'est pas encore consigné ; la consommation du budget horaire reste à établir.
+- **Avancement qualité :** domaine et isolation vérifiés, deux agents actifs ; mot de passe exposé dans une description LDAP confirmé par une connexion SMB réussie, corrélée à l'événement 4624 / règle Wazuh 100101.
+- **Risques actifs :** délai restant court, temps réel non mesuré, couverture des techniques encore partielle, reconstruction complète du lab non vérifiée.
+- **Décisions / points d'attention :** prioriser un scénario court avec preuves et traces ; signaler l'utilisation des identifiants initiaux du scénario ; conserver les secrets et journaux bruts hors du dépôt public.
+
+[Compte rendu de la séance et prochaines étapes](./docs/seance-2026-10-14.md).
 
 ### Rapport d'avancement n°2 — clôture (vendredi 16 octobre)
 

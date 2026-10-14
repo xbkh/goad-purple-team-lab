@@ -2,13 +2,14 @@
 
 [← Retour à l'accueil](./README.md)
 
-**Dernière mise à jour : 13 octobre 2026.**
+**Dernière mise à jour : 14 octobre 2026.**
 
 ## En bref
 
 Le lab fonctionne : les deux machines Windows appartiennent au même domaine,
 et Wazuh reçoit leurs événements. Les réseaux du lab sont isolés.
-La prochaine étape est de commencer le test d'intrusion dans cet environnement.
+Les premiers tests ont commencé : services repérés, mot de passe exposé dans
+l’annuaire confirmé et connexion avec le compte concerné observée dans Wazuh.
 
 Période prévue : **12–16 octobre 2026**. Budget prévisionnel : **20 h au total,
 environ 4 h/jour**. Le temps de travail réel n'a pas encore été consigné ;
@@ -36,6 +37,17 @@ fiable de ce temps.
 Les [contrôles détaillés](./docs/validation-lab-2026-10-13.md) ont été réalisés
 le 13 octobre vers 09:41, heure de Zurich.
 
+### Mercredi 14 octobre — reconnaissance et premier constat
+
+- Lab redémarré et contrôlé : deux machines et deux agents opérationnels.
+- Douze ports TCP examinés sur chaque machine.
+- Lecture guidée de l'annuaire avec `dave` : mot de passe de `bob` exposé dans sa description.
+- Connexion SMB comme `bob` réussie et événement 4624 / règle Wazuh 100101 corrélés.
+- Mot de passe et journaux bruts conservés hors du dépôt public.
+
+[Compte rendu simple de la séance et travail personnel](./docs/seance-2026-10-14.md).
+Le mouvement latéral, DCSync et la cartographie complète restent à réaliser.
+
 ## Difficultés rencontrées et décisions
 
 | Difficulté | Décision et résultat |
@@ -52,8 +64,9 @@ Le détail est dans le [journal technique](./docs/journal-demarrage.md).
 - [x] Installer et vérifier le lab.
 - [x] Recevoir de vrais événements Wazuh depuis les deux machines.
 - [x] Publier le dépôt et le suivi sur GitHub.
-- [ ] Reconnaître les services et cartographier le domaine.
-- [ ] Réaliser les tests d'intrusion et conserver les preuves.
+- [x] Réaliser une première reconnaissance des services.
+- [ ] Compléter la cartographie du domaine.
+- [ ] Terminer les tests d'intrusion : première faiblesse vérifiée, suite à réaliser.
 - [ ] Relier chaque technique aux traces ou alertes Wazuh, et documenter les absences de détection.
 - [ ] Vérifier la reconstruction complète du lab depuis zéro.
 - [ ] Rédiger le rapport et le guide de détection.
@@ -66,6 +79,6 @@ La préparation, prévue le 12 octobre, s'est terminée le 13. Les tests et la
 rédaction restent à réaliser avant le 16 octobre : il faudra prioriser les
 techniques documentées pour respecter le budget prévu.
 
-La collecte d'événements est vérifiée. La détection des attaques reste à tester :
-une alerte observée pendant l'installation ne prouve pas une attaque réussie.
+La collecte est vérifiée et une connexion SMB de test est corrélée à Wazuh.
+Les autres techniques et leurs détections restent à vérifier.
 Le redéploiement complet depuis zéro reste également à vérifier.

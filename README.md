@@ -9,18 +9,19 @@ projets* (CFC 306, Projet 5).
 
 ## Où en est le projet ?
 
-**Dernière mise à jour : 13 octobre 2026. Le lab est prêt pour les tests.**
+**Dernière mise à jour : 14 octobre 2026. Les premiers tests ont commencé.**
 
 | Étape | Avancement |
 | --- | --- |
 | Installer le lab et son réseau isolé | Terminé et vérifié |
 | Installer Wazuh et recevoir les événements des deux machines | Terminé et vérifié |
-| Réaliser le test d'intrusion | À faire — prochaine étape |
-| Vérifier la détection de chaque technique d'attaque | À faire |
+| Réaliser le test d'intrusion | En cours : reconnaissance et première faiblesse vérifiées |
+| Vérifier la détection de chaque technique d'attaque | Première connexion de test corrélée dans Wazuh ; suite à réaliser |
 | Tester la reconstruction complète du lab | À faire |
 | Rédiger le rapport et le bilan, puis publier sur le portfolio | À faire |
 
-Les événements reçus jusqu'ici proviennent de la préparation et des contrôles.
+Une première faiblesse a permis une connexion avec un compte du lab ; sa trace Wazuh est confirmée.
+[Lire le compte rendu du mercredi](./docs/seance-2026-10-14.md).
 Aucune compromission du domaine n'est encore revendiquée.
 
 **[Lire le suivi du projet : réalisations, difficultés et prochaines étapes](./SUIVI.md)**
