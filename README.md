@@ -72,9 +72,8 @@ Les fichiers sont rangés dans [`screenshots/`](./screenshots/), par date.
 
 **Dates des captures :** les quatre captures directes des fenêtres Windows ont été
 prises le **14 octobre entre 09:27 et 09:31 à Zurich** (07:27–07:31 UTC).
-Les six autres images montrent un lecteur de traces conservées, capturé le 14.
-Pour les **12 et 13**, aucune capture originale des fenêtres n’a été conservée :
-leurs images sont donc présentées explicitement comme des lectures rétrospectives.
+Pour les **12 et 13**, aucune capture originale des fenêtres n’a été conservée.
+Le suivi écrit de ces journées est présenté ci-dessous.
 
 ### Lundi 12 octobre — préparation
 
@@ -87,13 +86,6 @@ leurs images sont donc présentées explicitement comme des lectures rétrospect
 
 **Résultat :** la collecte sur DC01 fonctionne. Ces tests de préparation ne
 prouvent aucune compromission ; la détection DCSync reste à tester.
-
-#### Trace conservée : installation et collecte Wazuh
-
-Lecture rétrospective capturée le **14 octobre**, à partir des traces du 12.
-[Extrait texte](./screenshots/2026-10-12/12-collecte-wazuh.txt).
-
-![Traces du 12 octobre : installation de l’agent et collecte Wazuh, lecteur capturé le 14](./screenshots/2026-10-12/12-collecte-wazuh.jpg)
 
 ### Mardi 13 octobre — installation et validation
 
@@ -121,13 +113,6 @@ Lecture rétrospective capturée le **14 octobre**, à partir des traces du 12.
 Les connexions ci-dessus proviennent de l’administration de validation.
 Des événements 4662 / règle 100102 apparaissent pendant le provisionnement :
 **ils ne prouvent pas une attaque DCSync**.
-
-#### Trace conservée : deux agents et réseaux isolés
-
-Lecture rétrospective capturée le **14 octobre**, à partir des traces du 13.
-[Extrait texte](./screenshots/2026-10-13/13-installation-isolation.txt).
-
-![Traces du 13 octobre : deux agents et isolation, lecteur capturé le 14](./screenshots/2026-10-13/13-installation-isolation.jpg)
 
 ### Mercredi 14 octobre — premiers tests
 
@@ -229,27 +214,6 @@ Ces quatre images sont des captures sans retouche des consoles réelles des VM,
 consultées via noVNC. L’horloge Windows en bas des images est en UTC.
 Elles montrent les vérifications du 14, sans prouver à elles seules les attaques.
 
-#### Résultats conservés — reconnaissance Nmap
-
-Capture du lecteur des résultats du 14 octobre, distincte des fenêtres Windows
-ci-dessus. [Extrait texte](./screenshots/2026-10-14/14-reconnaissance.txt).
-
-![Résultats du scan Nmap : lecteur de traces du 14 octobre](./screenshots/2026-10-14/14-reconnaissance.jpg)
-
-#### Résultats conservés — compte bob et événement Wazuh
-
-Capture du lecteur des résultats et métadonnées corrélées, sans mot de passe.
-[Extrait texte](./screenshots/2026-10-14/14-compte-bob-et-alerte.txt).
-
-![Connexion bob et événement Wazuh : lecteur de traces du 14 octobre](./screenshots/2026-10-14/14-compte-bob-et-alerte.jpg)
-
-#### Résultats conservés — domaine et deux agents
-
-Capture du lecteur des contrôles du 14 octobre.
-[Extrait texte](./screenshots/2026-10-14/14-domaine-et-agents.txt).
-
-![Validation du domaine et des agents : lecteur de traces du 14 octobre](./screenshots/2026-10-14/14-domaine-et-agents.jpg)
-
 #### Correction des horloges et traçabilité
 
 Un décalage d’environ **sept heures d’avance** des horloges Windows a été
@@ -261,11 +225,6 @@ Les deux VM ont été remises à l’heure UTC. Une nouvelle lecture vers 06:59 
 a mesuré environ 1,55 s d’écart pour DC01 et 0,52 s pour WS01. Le domaine et
 les services Wazuh ont également été contrôlés. Les traces initiales sont conservées
 avec leurs heures d’origine.
-
-Capture du lecteur des contrôles avant/après.
-[Extrait texte](./screenshots/2026-10-14/14-horloges-avant-apres.txt).
-
-![Horloges Windows avant et après correction : lecteur de traces du 14 octobre](./screenshots/2026-10-14/14-horloges-avant-apres.jpg)
 
 ### Jeudi 15 octobre — à compléter
 
@@ -291,7 +250,7 @@ les livrables. Les résultats et les captures seront ajoutés ici.
 | Identité Windows identique entre les clones | Généralisation de WS01 avec Sysprep, puis jonction au domaine |
 | Découverte du domaine mal initialisée au démarrage | Relance de la découverte sur WS01 ; démarrage de DC01 avant WS01 et validation explicite |
 | Horloges Windows décalées | Correction UTC ; distinction entre heure du test, heure Windows et réception Wazuh |
-| Absence de captures originales des 12 et 13 | Traces conservées présentées comme lectures rétrospectives, avec dates indiquées |
+| Absence de captures originales des 12 et 13 | Suivi écrit conservé ; captures techniques disponibles à partir du 14 |
 | Préparation terminée le 13 au lieu du 12 | Prioriser un scénario court, documenté et corrélé à Wazuh avant le 16 |
 
 ## Prochaines étapes
@@ -300,7 +259,7 @@ les livrables. Les résultats et les captures seront ajoutés ici.
 - [x] Recevoir de vrais événements Wazuh depuis les deux machines.
 - [x] Réaliser une première reconnaissance des services.
 - [x] Vérifier une première faiblesse et corréler la connexion dans Wazuh.
-- [x] Publier le suivi et les dix captures dans cette documentation.
+- [x] Publier le suivi et les quatre captures techniques dans cette documentation.
 - [ ] Compléter la cartographie du domaine.
 - [ ] Vérifier les privilèges de `bob` sur WS01 et documenter les tests suivants.
 - [ ] Relier chaque technique aux traces ou alertes, y compris les absences de détection.
@@ -342,12 +301,8 @@ une sélection explicite de champs.
 
 ### Dates et intégrité des captures
 
-- [Manifeste des six captures du lecteur](./screenshots/manifest.json) : sources,
-  sélections d’extraits, dates, fichiers et empreintes SHA-256.
 - [Manifeste des quatre captures directes](./screenshots/2026-10-14/manifest-directes.json) :
   machine, logiciel, heure UTC et empreinte SHA-256.
 
 Les originaux des traces sont figés dans les archives locales. Une empreinte
 permet de vérifier l’intégrité d’un fichier ; elle ne certifie pas sa date.
-Les chemins `kvm/logs/preuves-2026-10-14/` dans le manifeste désignent ces archives
-locales d’origine et restent inchangés pour préserver la provenance.
