@@ -2,7 +2,7 @@
 
 **Journal du projet, résultats et captures d’écran — du 12 au 16 octobre 2026.**
 
-Dernière mise à jour : **14 octobre 2026**.
+Dernière mise à jour : **15 octobre 2026**.
 
 Projet personnel de test d’intrusion sur un environnement Active Directory
 volontairement vulnérable, basé sur [GOAD](https://github.com/Orange-Cyberdefense/GOAD).
@@ -18,7 +18,7 @@ Ce projet sert aussi de rendu PPE pour le cours *Techniques de gestion de projet
   - [Lundi 12 octobre — préparation](#lundi-12-octobre--préparation)
   - [Mardi 13 octobre — installation et validation](#mardi-13-octobre--installation-et-validation)
   - [Mercredi 14 octobre — premiers tests](#mercredi-14-octobre--premiers-tests)
-  - [Jeudi 15 octobre — à compléter](#jeudi-15-octobre--à-compléter)
+  - [Jeudi 15 octobre — mouvement latéral et DCSync](#jeudi-15-octobre--mouvement-latéral-et-dcsync)
   - [Vendredi 16 octobre — à compléter](#vendredi-16-octobre--à-compléter)
 - [Difficultés et décisions](#difficultés-et-décisions)
 - [Prochaines étapes](#prochaines-étapes)
@@ -26,18 +26,20 @@ Ce projet sert aussi de rendu PPE pour le cours *Techniques de gestion de projet
 
 ## Avancement
 
-| Étape | État au 14 octobre |
+| Étape | État au 15 octobre |
 | --- | --- |
 | Installer le lab et son réseau isolé | Terminé et vérifié |
 | Installer Wazuh et recevoir les événements des deux machines | Terminé et vérifié |
-| Réaliser le test d’intrusion | En cours : reconnaissance et première faiblesse vérifiées |
-| Vérifier la détection de chaque technique | Une connexion SMB de test corrélée dans Wazuh ; suite à réaliser |
+| Réaliser le test d’intrusion | Mouvement latéral et compromission du domaine obtenus |
+| Vérifier la détection de chaque technique | Mouvement latéral et DCSync corrélés dans Wazuh ; écart de détection documenté sur le 4688 |
 | Vérifier la reconstruction complète du lab | À faire |
 | Rédiger le rapport, le guide de détection et le bilan | À faire |
 | Publier les livrables sur le portfolio | À faire |
 
-**Une première connexion avec un compte exposé dans l’annuaire a réussi.**
-Le mouvement latéral, DCSync et la compromission du domaine restent à réaliser.
+**Le compte `bob`, compromis mercredi via une description LDAP lisible, a permis une
+exécution de code en LocalSystem sur WS01 (mouvement latéral).** Jeudi, un DCSync
+avec le compte `alice` (Domain Admins, identifiants du scénario) a extrait le hash
+et les clés Kerberos du compte `Administrator` : **compromission du domaine obtenue**.
 
 ## Environnement et planning
 
@@ -62,7 +64,7 @@ de téléchargement et d’installation ne sont pas comptées comme du travail m
 | Lundi 12 | Préparation du lab commencée |
 | Mardi 13 | Installation terminée et validée ; la préparation a débordé d’un jour |
 | Mercredi 14 | Reconnaissance, premier constat et captures directes |
-| Jeudi 15 | Poursuite des tests et corrélation avec Wazuh, à réaliser |
+| Jeudi 15 | Mouvement latéral (SYSTEM sur WS01) et DCSync réussis, détections corrélées |
 | Vendredi 16 | Finalisation du rapport, bilan et publication, à réaliser |
 
 ## Journal et captures d’écran
@@ -226,13 +228,64 @@ a mesuré environ 1,55 s d’écart pour DC01 et 0,52 s pour WS01. Le domaine et
 les services Wazuh ont également été contrôlés. Les traces initiales sont conservées
 avec leurs heures d’origine.
 
-### Jeudi 15 octobre — à compléter
+### Jeudi 15 octobre — mouvement latéral et DCSync
 
-Séance à réaliser : vérifier les privilèges effectifs de `bob` sur WS01 avec une
-commande bénigne (`whoami`), puis rechercher les traces Windows et Wazuh
-correspondantes. Compléter la cartographie selon le temps disponible.
+**Objectif :** vérifier si les identifiants de `bob` (trouvés mercredi) permettent une
+réelle exécution de code sur WS01, puis tenter la compromission du domaine par DCSync
+avec un compte Domain Admins du scénario, en corrélant chaque étape côté Wazuh.
 
-Les résultats, le temps consacré et les captures seront ajoutés ici pendant la séance.
+#### Mouvement latéral
+
+1. Redécouverte du mot de passe de `bob` par lecture LDAP (même technique que mercredi).
+2. `wmiexec.py` échoue côté client : la connexion DCOM reste bloquée après la sélection
+   du port RPC dynamique (49667), bien que ce port soit ouvert. Cause non confirmée.
+3. `smbexec.py` puis `psexec.py` (deux tentatives) : le partage `ADMIN$` est accessible
+   en écriture avec les identifiants de `bob`, un binaire est déposé, un service Windows
+   est créé puis démarré. **Les trois services tournent en `LocalSystem`** — démontrant
+   une exécution de code avec les plus hauts privilèges sur WS01, même si la sortie de
+   la commande (`whoami`) n'a pas pu être récupérée côté client (blocage sur le canal de
+   sortie, sans incidence sur le résultat de l'attaque).
+4. Contrôle après coup : les trois services se sont supprimés automatiquement
+   (comportement normal des outils Impacket) ; aucun artefact résiduel sur WS01.
+
+**Observation annexe :** des connexions réseau répétées du compte `carol` (Domain
+Admins) depuis DC01 vers WS01 ont été repérées pendant le test, toutes les ~30
+secondes. Vérification faite (`query session`) : aucune session interactive, logon
+de type réseau uniquement — il s'agit d'une activité d'arrière-plan du lab GOAD,
+sans lien avec nos tests.
+
+#### Compromission du domaine (DCSync)
+
+Avec les identifiants d'`alice` (Domain Admins, fournis par le scénario GOAD — test
+guidé, comme pour `dave` mercredi) :
+
+```
+secretsdump.py -just-dc-user administrator mini.lab/alice:***@192.168.56.30
+```
+
+**Résultat :** extraction réussie du hash NTLM et des clés Kerberos (AES256, AES128,
+DES) du compte `Administrator`. Réplication volontairement limitée à un seul compte
+(`-just-dc-user administrator`), conformément au cahier des charges. Secrets non
+publiés, conservés uniquement en local.
+
+#### Détection côté Wazuh
+
+| Technique | Règle déclenchée | Résultat |
+| --- | --- | --- |
+| Logons réseau de `bob` (4 tentatives) | 100101 (custom, niveau 6) | 28 événements 4624 corrélés, agent `ws`, source 192.168.56.1 |
+| Dépôt de service via un partage admin (`smbexec`/`psexec`) | **92650** (règle Wazuh **native**, niveau **12**) | 2 alertes : *"New Windows Service Created to start from windows root path. Suspicious event as the binary may have been dropped using Windows Admin Shares."* — détection plus sévère que toute règle custom du projet |
+| Création de process (4688) pendant les tests | 67027 (règle générique par défaut, niveau 3) | 729 occurrences, mais sans corrélation au compte ni au contexte — **écart de détection documenté** : collecté et techniquement alerté, mais noyé dans le bruit, inexploitable pour un triage |
+| DCSync (droits de réplication AD) | 100102 (custom, niveau 10) | 3 événements 4662, compte `alice`, GUID `1131f6aa`/`1131f6ad` (DS-Replication-Get-Changes / -All), horodatage concordant à la seconde près avec le test |
+
+**Point marquant pour le rapport final :** la détection la plus sévère du jour (niveau 12)
+vient d'une règle Wazuh **par défaut**, pas d'une règle écrite pour ce projet — un bon
+argument pour la partie « valeur du ruleset de base » du guide de détection.
+
+![Preuve mouvement latéral sur WS01 : logons bob et services LocalSystem](./screenshots/2026-10-15/01-ws01-mouvement-lateral.jpg)
+
+**WS01 · console PowerShell · 15 octobre, 08:36 UTC.** Capture du contenu d'un
+fichier de preuve généré depuis les journaux Windows, affichant les horodatages
+des logons de `bob` et des trois créations de service en `LocalSystem`.
 
 ### Vendredi 16 octobre — à compléter
 
@@ -252,6 +305,8 @@ les livrables. Les résultats et les captures seront ajoutés ici.
 | Horloges Windows décalées | Correction UTC ; distinction entre heure du test, heure Windows et réception Wazuh |
 | Absence de captures originales des 12 et 13 | Suivi écrit conservé ; captures techniques disponibles à partir du 14 |
 | Préparation terminée le 13 au lieu du 12 | Prioriser un scénario court, documenté et corrélé à Wazuh avant le 16 |
+| `wmiexec` bloqué sur l'appel DCOM malgré un port RPC ouvert | Repli sur `smbexec`/`psexec` (SMB uniquement) ; la création et le démarrage réussis de services en LocalSystem suffisent à prouver l'exécution de code, même sans récupérer la sortie de la commande |
+| Sortie des commandes distantes non récupérable côté client (blocage sur le canal de sortie) | Preuve basée sur les journaux Windows et Wazuh plutôt que sur la sortie texte de l'outil ; résultat non affecté |
 
 ## Prochaines étapes
 
@@ -260,9 +315,10 @@ les livrables. Les résultats et les captures seront ajoutés ici.
 - [x] Réaliser une première reconnaissance des services.
 - [x] Vérifier une première faiblesse et corréler la connexion dans Wazuh.
 - [x] Publier le suivi et les quatre captures techniques dans cette documentation.
-- [ ] Compléter la cartographie du domaine.
-- [ ] Vérifier les privilèges de `bob` sur WS01 et documenter les tests suivants.
-- [ ] Relier chaque technique aux traces ou alertes, y compris les absences de détection.
+- [x] Vérifier les privilèges de `bob` sur WS01 : exécution de code en LocalSystem confirmée (mouvement latéral).
+- [x] Obtenir la compromission du domaine (DCSync avec `alice`, réplication limitée à `administrator`).
+- [x] Relier chaque technique aux traces ou alertes, y compris un écart de détection documenté (4688 collecté mais non corrélé).
+- [ ] Compléter la cartographie du domaine (BloodHound), si le temps le permet.
 - [ ] Vérifier la reconstruction complète depuis zéro ; aucun délai de 15 minutes n’est validé.
 - [ ] Rédiger le rapport de pentest et le guide de détection.
 - [ ] Compléter les rapports d’avancement, le bilan et le retour d’expérience.
@@ -299,10 +355,16 @@ locales utilisent aussi `health.json`, `domain-validation.json` et
 journaux bruts ne sont pas publiés. Les métadonnées d’alertes sont exportées par
 une sélection explicite de champs.
 
+La séance du 15 octobre (mouvement latéral et DCSync) suit la même logique :
+détails et horodatages dans `kvm/logs/2026-10-15/jeudi-synthese.json`, exclus de
+Git. Les hash et clés extraits par le DCSync ne sont conservés que localement.
+
 ### Dates et intégrité des captures
 
-- [Manifeste des quatre captures directes](./screenshots/2026-10-14/manifest-directes.json) :
+- [Manifeste des quatre captures directes du 14](./screenshots/2026-10-14/manifest-directes.json) :
   machine, logiciel, heure UTC et empreinte SHA-256.
+- [Manifeste de la capture du 15](./screenshots/2026-10-15/manifest-directes.json) :
+  mouvement latéral sur WS01.
 
 Les originaux des traces sont figés dans les archives locales. Une empreinte
 permet de vérifier l’intégrité d’un fichier ; elle ne certifie pas sa date.

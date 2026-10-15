@@ -1,0 +1,10 @@
+[
+  {
+    "fichier": "01-ws01-mouvement-lateral.jpg",
+    "machine": "WS01",
+    "logiciel": "Windows PowerShell (console noVNC)",
+    "heure_utc": "2026-10-15T08:36:00Z",
+    "sha256": "3a399a28c551e31999a1f3279b6f039a7e3574b23f26c448a7a281882e778a32",
+    "contenu": "Sortie de 'cat .\\proof-jeudi.txt' affichant les horodatages des logons reseau du compte bob (4624) et des trois services Windows crees en LocalSystem par les outils d'exploitation (smbexec, psexec x2) pendant le test de mouvement lateral."
+  }
+]
