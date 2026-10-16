@@ -6,5 +6,13 @@
     "heure_utc": "2026-10-16T06:27:00Z",
     "sha256": "d639454ab611f866a2c12551e709bcde0c36cdf41b549899d337e72934f44a2a",
     "contenu": "Tableau de bord Server Manager sur DC01 : 3 roles installes et actifs (AD DS, DNS, File and Storage Services), preuve de l'installation du controleur de domaine."
+  },
+  {
+    "fichier": "02-ws01-wazuh-synthese.jpg",
+    "machine": "WS01",
+    "logiciel": "Bloc-notes (console noVNC)",
+    "heure_utc": "2026-10-16T07:08:00Z",
+    "sha256": "c4c8a195411636d97afc3727976ba8a4d6d5d23e5ccc7cf9d8f093b4e57adc66",
+    "contenu": "Synthese des detections Wazuh sur l'ensemble du projet : etat de l'agent sur WS01, et compte des alertes par regle (100100, 100101, 100102, 92650) sur les 14 et 15 octobre."
   }
 ]

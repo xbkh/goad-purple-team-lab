@@ -299,6 +299,12 @@ les 3 rôles installés (AD DS, DNS, File and Storage Services) — preuve de
 l'installation du contrôleur de domaine, complémentaire aux vérifications
 WinRM déjà publiées.
 
+![Synthèse des détections Wazuh affichée dans le Bloc-notes sur WS01](./screenshots/2026-10-16/02-ws01-wazuh-synthese.jpg)
+
+**WS01 · Bloc-notes · 16 octobre, 07:08 UTC.** Récapitulatif des alertes
+Wazuh déclenchées sur l'ensemble du projet : état de l'agent, et comptage par
+règle (100100, 100101, 100102, 92650) sur les journées du 14 et du 15.
+
 Séance consacrée à la finalisation : rapport de pentest, guide de détection,
 rapports d'avancement, bilan et retour d'expérience, puis publication.
 
