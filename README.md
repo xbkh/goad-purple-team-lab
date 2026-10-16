@@ -32,7 +32,7 @@ Ce projet sert aussi de rendu PPE pour le cours *Techniques de gestion de projet
 | Installer Wazuh et recevoir les événements des deux machines | Terminé et vérifié |
 | Réaliser le test d’intrusion | Mouvement latéral et compromission du domaine obtenus |
 | Vérifier la détection de chaque technique | Mouvement latéral et DCSync corrélés dans Wazuh ; écart de détection documenté sur le 4688 |
-| Vérifier la reconstruction complète du lab | Non validé (hors budget du projet) |
+| Vérifier la reconstruction complète du lab | Testée réellement : 47m59s (cible 15 min non atteinte), 2 échecs corrigés en direct |
 | Rédiger le rapport, le guide de détection et le bilan | Terminé — [rapport](./rapport-pentest.md), [playbook](./playbook-detection.md), bilan dans le [cahier des charges](./cahier-des-charges.md#bilan-de-clôture-et-retour-dexpérience-rex) |
 | Publier les livrables sur le portfolio | À faire |
 
@@ -40,6 +40,10 @@ Ce projet sert aussi de rendu PPE pour le cours *Techniques de gestion de projet
 exécution de code en LocalSystem sur WS01 (mouvement latéral).** Jeudi, un DCSync
 avec le compte `alice` (Domain Admins, identifiants du scénario) a extrait le hash
 et les clés Kerberos du compte `Administrator` : **compromission du domaine obtenue**.
+Vendredi, la cartographie BloodHound du domaine et le test réel de reconstruction
+complète ont tous deux été menés à terme — avec des résultats honnêtes plutôt
+qu'arrondis : un écart outillage/réalité terrain pour BloodHound (finding F5), et
+une reconstruction qui **ne tient pas** la cible de 15 minutes (47m59s réels).
 
 ## Environnement et planning
 
@@ -251,8 +255,13 @@ avec un compte Domain Admins du scénario, en corrélant chaque étape côté Wa
 **Observation annexe :** des connexions réseau répétées du compte `carol` (Domain
 Admins) depuis DC01 vers WS01 ont été repérées pendant le test, toutes les ~30
 secondes. Vérification faite (`query session`) : aucune session interactive, logon
-de type réseau uniquement — il s'agit d'une activité d'arrière-plan du lab GOAD,
-sans lien avec nos tests.
+de type réseau uniquement — à l'époque non élucidé, attribué à une activité
+d'arrière-plan du lab GOAD. **Mise à jour du 16 octobre :** la cause exacte est
+identifiée lors du rejeu complet du provisioning — une tâche planifiée
+(`vulns/schedule`, `connect_bot`) exécute `bot.ps1` toutes les minutes sur DC01
+en utilisant un identifiant d'`alice` stocké dans le Gestionnaire d'identifiants
+(CredSSP) ; ce n'est pas `carol` elle-même mais une simulation intentionnelle du
+scénario MINILAB, sans lien avec nos tests — confirmé, pas juste supposé.
 
 #### Compromission du domaine (DCSync)
 
@@ -393,6 +402,51 @@ membre réel du groupe `Administrators` local — une relation que BloodHound,
 collecté avec un compte de domaine standard, n'a pas vue. Détail et
 explication technique dans le [rapport de pentest, finding F5](./rapport-pentest.md#f5--écart-entre-cartographie-automatisée-bloodhound-et-réalité-terrain).
 
+**Confirmation apportée plus tard dans la journée** : le rejeu complet du
+provisioning (voir ci-dessous) a montré la tâche Ansible exacte qui crée
+cette relation — `Add domain users to local groups` → `Administrators:
+[MINILAB\wsadmin]` sur WS01, configurée en modifiant directement le SAM
+local de la machine, pas via une GPO. C'est précisément le mécanisme qui
+échappe à une collecte BloodHound basée sur LDAP/GPO.
+
+#### Validation de la reconstruction complète depuis zéro
+
+**Objectif du cahier des charges :** redéploiement complet du lab en moins
+de 15 minutes. Ce test n'avait jamais été fait réellement jusqu'ici — toutes
+les validations précédentes portaient sur des VM déjà provisionnées. Voici
+le résultat réel, sans arrondi à la hausse.
+
+**Chronologie complète (`vagrant destroy -f` → lab validé, UTC) :**
+
+| Heure | Événement |
+| --- | --- |
+| 18:43:37 | `vagrant destroy -f` sur les deux VM |
+| 18:43:37–18:47:23 | `make up` (relance des VM depuis la box, Sysprep de WS01) |
+| **18:47:23** | **Échec n°1** — `generalize-member.py` lève une exception : l'interface réseau de WS01 obtient une adresse link-local (`169.254.x.x`) au lieu de `192.168.56.31` après le redémarrage post-Sysprep (ré-énumération des cartes réseau non déterministe) |
+| 18:48–18:52 | Diagnostic : IP corrigée manuellement, `make provision` relancé |
+| **18:49:09** | **Échec n°2** — la tâche Ansible `Upgrade module PowerShellGet` échoue : besoin d'accès Internet pour télécharger le fournisseur `NuGet`, or le réseau `goad-purple-mgmt` était resté **isolé** (sans NAT) depuis la session du 13 octobre — un état qui persiste indépendamment de la destruction/recréation des VM |
+| 18:52:39 | NAT réactivé temporairement sur `goad-purple-mgmt` (depuis sa définition d'origine), **avec autorisation explicite** avant toute modification réseau |
+| 18:52–18:58 | VM redémarrées au niveau hyperviseur pour se rattacher au pont réseau recréé ; fuseau horaire corrigé en UTC (même symptôme que le 14 octobre — horloge décalée de 7h, root cause jamais corrigée durablement) |
+| 18:58:50 | `make provision` relancé |
+| 19:27:20–19:29:30 | Installation des agents Wazuh (`wazuh/install-agents.yml`), après une **3ᵉ erreur** de variables d'environnement Ansible oubliées (corrigée immédiatement, sans impact sur le lab) |
+| 19:30:00 | Ré-isolation des deux réseaux (`scripts/isolate.sh`) — confirmée sans transfert extérieur ni relais DNS |
+| **19:31:36** | **Validation finale :** domaine joint sur les deux machines, Wazuh `Running` sur les deux, 5067 alertes déjà collectées |
+
+**Durée totale : 47 minutes 59 secondes. Cible du cahier des charges (< 15
+minutes) : non atteinte.**
+
+**Ce que ça signifie réellement :** même en comptant uniquement le
+run réussi (sans les deux échecs), le provisioning complet — domaine AD,
+DNS, comptes du scénario, droits, Wazuh — prend environ **30 minutes**.
+L'automatisation existante (`make up` + `make provision` +
+`install-agents.yml`) fonctionne bien techniquement (0 échec Ansible sur
+l'ensemble du run réussi, hors les 2 problèmes d'infrastructure en amont),
+mais elle **suppose un environnement déjà dans son état initial** : elle ne
+gère pas la réouverture du réseau de management après une isolation
+précédente, et elle est sensible à la ré-énumération des interfaces réseau
+après Sysprep. Ce sont deux limites réelles de l'automatisation, pas des
+échecs ponctuels du lab.
+
 Séance consacrée à la finalisation : rapport de pentest, guide de détection,
 rapports d'avancement, bilan et retour d'expérience, puis publication.
 
@@ -410,6 +464,8 @@ rapports d'avancement, bilan et retour d'expérience, puis publication.
 | Préparation terminée le 13 au lieu du 12 | Prioriser un scénario court, documenté et corrélé à Wazuh avant le 16 |
 | `wmiexec` bloqué sur l'appel DCOM malgré un port RPC ouvert | Repli sur `smbexec`/`psexec` (SMB uniquement) ; la création et le démarrage réussis de services en LocalSystem suffisent à prouver l'exécution de code, même sans récupérer la sortie de la commande |
 | Sortie des commandes distantes non récupérable côté client (blocage sur le canal de sortie) | Preuve basée sur les journaux Windows et Wazuh plutôt que sur la sortie texte de l'outil ; résultat non affecté |
+| Réseau lab mal réassigné après Sysprep de WS01 (IP link-local au lieu de 192.168.56.31) | Diagnostic via les adaptateurs réseau réels, correction manuelle de l'IP, cause probable : ré-énumération non déterministe des cartes après Sysprep |
+| Réseau de management resté isolé (sans NAT) après une isolation précédente, bloquant le provisioning (besoin d'Internet pour PowerShellGet) | Réactivation temporaire du NAT depuis la définition d'origine du dépôt, **avec autorisation explicite demandée avant modification réseau** ; réseaux ré-isolés en fin de reconstruction via `isolate.sh` |
 
 ## Prochaines étapes
 
@@ -423,8 +479,8 @@ rapports d'avancement, bilan et retour d'expérience, puis publication.
 - [x] Relier chaque technique aux traces ou alertes, y compris un écart de détection documenté (4688 collecté mais non corrélé).
 - [x] Rédiger le rapport de pentest et le guide de détection.
 - [x] Compléter les rapports d’avancement, le bilan et le retour d’expérience.
-- [ ] Compléter la cartographie du domaine (BloodHound) — abandonné faute de temps, cf. bilan.
-- [ ] Vérifier la reconstruction complète depuis zéro ; aucun délai de 15 minutes n’est validé.
+- [x] Compléter la cartographie du domaine (BloodHound) — faite, finding F5 sur l'écart outillage/réalité.
+- [x] Vérifier la reconstruction complète depuis zéro — faite : **échoue à atteindre les 15 minutes** (47m59s réels, 2 échecs corrigés en direct), cf. section dédiée ci-dessus.
 - [ ] Publier les livrables sur le portfolio.
 
 **À consigner par le porteur du projet :** temps réellement travaillé chaque jour,
