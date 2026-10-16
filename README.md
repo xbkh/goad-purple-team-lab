@@ -2,7 +2,7 @@
 
 **Journal du projet, résultats et captures d’écran — du 12 au 16 octobre 2026.**
 
-Dernière mise à jour : **15 octobre 2026**.
+Dernière mise à jour : **16 octobre 2026**.
 
 Projet personnel de test d’intrusion sur un environnement Active Directory
 volontairement vulnérable, basé sur [GOAD](https://github.com/Orange-Cyberdefense/GOAD).
@@ -287,11 +287,20 @@ argument pour la partie « valeur du ruleset de base » du guide de détection.
 fichier de preuve généré depuis les journaux Windows, affichant les horodatages
 des logons de `bob` et des trois créations de service en `LocalSystem`.
 
-### Vendredi 16 octobre — à compléter
+### Vendredi 16 octobre — rapport, bilan et publication
 
-Séance à réaliser : finaliser le rapport, le guide de détection, le bilan et le
-retour d’expérience ; vérifier les objectifs effectivement atteints et publier
-les livrables. Les résultats et les captures seront ajoutés ici.
+Relance du lab (VMs et manager Wazuh arrêtés pendant la nuit, redémarrés et
+revalidés) : domaine joint, agents Wazuh `Running` sur les deux machines.
+
+![Server Manager sur DC01 : rôles AD DS, DNS et File and Storage Services installés](./screenshots/2026-10-16/01-dc01-server-manager-roles.jpg)
+
+**DC01 · Server Manager · 16 octobre, 06:27 UTC.** Tableau de bord confirmant
+les 3 rôles installés (AD DS, DNS, File and Storage Services) — preuve de
+l'installation du contrôleur de domaine, complémentaire aux vérifications
+WinRM déjà publiées.
+
+Séance consacrée à la finalisation : rapport de pentest, guide de détection,
+rapports d'avancement, bilan et retour d'expérience, puis publication.
 
 ## Difficultés et décisions
 

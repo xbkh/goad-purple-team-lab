@@ -1,0 +1,10 @@
+[
+  {
+    "fichier": "01-dc01-server-manager-roles.jpg",
+    "machine": "DC01",
+    "logiciel": "Server Manager (console noVNC)",
+    "heure_utc": "2026-10-16T06:27:00Z",
+    "sha256": "d639454ab611f866a2c12551e709bcde0c36cdf41b549899d337e72934f44a2a",
+    "contenu": "Tableau de bord Server Manager sur DC01 : 3 roles installes et actifs (AD DS, DNS, File and Storage Services), preuve de l'installation du controleur de domaine."
+  }
+]
