@@ -26,14 +26,14 @@ Ce projet sert aussi de rendu PPE pour le cours *Techniques de gestion de projet
 
 ## Avancement
 
-| Étape | État au 15 octobre |
+| Étape | État au 16 octobre |
 | --- | --- |
 | Installer le lab et son réseau isolé | Terminé et vérifié |
 | Installer Wazuh et recevoir les événements des deux machines | Terminé et vérifié |
 | Réaliser le test d’intrusion | Mouvement latéral et compromission du domaine obtenus |
 | Vérifier la détection de chaque technique | Mouvement latéral et DCSync corrélés dans Wazuh ; écart de détection documenté sur le 4688 |
-| Vérifier la reconstruction complète du lab | À faire |
-| Rédiger le rapport, le guide de détection et le bilan | À faire |
+| Vérifier la reconstruction complète du lab | Non validé (hors budget du projet) |
+| Rédiger le rapport, le guide de détection et le bilan | Terminé — [rapport](./rapport-pentest.md), [playbook](./playbook-detection.md), bilan dans le [cahier des charges](./cahier-des-charges.md#bilan-de-clôture-et-retour-dexpérience-rex) |
 | Publier les livrables sur le portfolio | À faire |
 
 **Le compte `bob`, compromis mercredi via une description LDAP lisible, a permis une
@@ -327,10 +327,10 @@ rapports d'avancement, bilan et retour d'expérience, puis publication.
 - [x] Vérifier les privilèges de `bob` sur WS01 : exécution de code en LocalSystem confirmée (mouvement latéral).
 - [x] Obtenir la compromission du domaine (DCSync avec `alice`, réplication limitée à `administrator`).
 - [x] Relier chaque technique aux traces ou alertes, y compris un écart de détection documenté (4688 collecté mais non corrélé).
-- [ ] Compléter la cartographie du domaine (BloodHound), si le temps le permet.
+- [x] Rédiger le rapport de pentest et le guide de détection.
+- [x] Compléter les rapports d’avancement, le bilan et le retour d’expérience.
+- [ ] Compléter la cartographie du domaine (BloodHound) — abandonné faute de temps, cf. bilan.
 - [ ] Vérifier la reconstruction complète depuis zéro ; aucun délai de 15 minutes n’est validé.
-- [ ] Rédiger le rapport de pentest et le guide de détection.
-- [ ] Compléter les rapports d’avancement, le bilan et le retour d’expérience.
 - [ ] Publier les livrables sur le portfolio.
 
 **À consigner par le porteur du projet :** temps réellement travaillé chaque jour,
@@ -346,6 +346,8 @@ Le suivi et toutes les captures sont regroupés sur cette page. Les documents
 suivants servent à cadrer le projet ou à utiliser le lab :
 
 - [Cahier des charges](./cahier-des-charges.md) : objectifs, périmètre, budget et grille d’évaluation.
+- [Rapport de pentest](./rapport-pentest.md) : résumé exécutif, findings notés CVSS, recommandations.
+- [Playbook de détection](./playbook-detection.md) : mapping technique d’attaque → règle Wazuh.
 - [Guide d’installation et commandes](./kvm/README.md) : exploitation technique du lab.
 - [Scénario de test](./kvm/SCENARIO.md) : techniques prévues et détections attendues.
 

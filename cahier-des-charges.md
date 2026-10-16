@@ -184,11 +184,11 @@ Gabarit utilisé pour chaque rapport envoyé au comité de pilotage (formateur) 
 
 ### Rapport d'avancement n°2 — clôture (vendredi 16 octobre)
 
-- **Avancement délai :** à compléter
-- **Avancement coût :** à compléter
-- **Avancement qualité :** à compléter
-- **Risques actifs :** à compléter
-- **Décisions / points d'attention :** à compléter
+- **Avancement délai :** clôture dans les temps, au jour prévu (vendredi 16), malgré le glissement d'un jour subi en semaine 1 (préparation terminée le 13 au lieu du 12), absorbé sans décaler la fin du projet.
+- **Avancement coût :** budget révisé en cours de route, de ~9h/jour à ~4h/jour (contrainte réelle de disponibilité, cf. risque déjà identifié). Temps réellement travaillé non chronométré à la minute près malgré la consigne du README — point à corriger pour un prochain projet (cf. REX).
+- **Avancement qualité :** tous les objectifs techniques du projet sont atteints — lab fonctionnel, chaîne d'attaque complète jusqu'à la compromission du domaine (DCSync), détection corrélée pour 4 techniques sur 5 testées, et un écart de détection documenté comme un vrai résultat plutôt que masqué. Rapport de pentest et playbook de détection rédigés et publiés.
+- **Risques actifs :** reconstruction complète du lab en moins de 15 minutes jamais validée (risque pour la reproductibilité future) ; cartographie BloodHound non réalisée, abandonnée faute de temps au profit de la chaîne d'attaque complète.
+- **Décisions / points d'attention :** priorité donnée à la chaîne d'attaque de bout en bout (LDAP → mouvement latéral → DCSync) plutôt qu'à l'exhaustivité du scénario prévu dans `SCENARIO.md` ; certaines preuves prévues en capture d'écran ont été remplacées par des preuves texte/JSON horodatées quand l'automatisation de la console graphique échouait techniquement (boîtes de dialogue protégées UAC, non interactives par conception).
 
 ## Gestion de l'aléa imprévu
 
@@ -204,22 +204,22 @@ Le PPE prévoit un aléa injecté par le formateur en cours de semaine. En auton
 
 **Gabarit de documentation de la réponse :**
 
-- **Aléa rencontré :** à compléter
-- **Impact (délai, coût, périmètre) :** à compléter
-- **Décision prise :** à compléter
-- **Action corrective :** à compléter
-- **Mise à jour du planning :** à compléter
+- **Aléa rencontré :** proche du n°4 (imprévu réduisant le temps disponible) et du n°5 (panne de ressources) combinés : frictions techniques non anticipées — `wmiexec` qui se bloque sur l'appel DCOM sans message d'erreur exploitable, VM arrêtées entre les séances à redémarrer le vendredi, et automatisation des clics peu fiable sur certaines boîtes de dialogue Windows (protection UAC empêchant volontairement toute interaction programmatique).
+- **Impact (délai, coût, périmètre) :** temps de manipulation consommé par des contournements techniques plutôt que par l'avancement du scénario ; périmètre des captures d'écran prévues réduit (certaines boîtes de dialogue sont restées inaccessibles par conception).
+- **Décision prise :** basculer sur des outils alternatifs quand un blocage technique apparaît (`smbexec`/`psexec` à la place de `wmiexec`) et accepter une preuve technique indirecte (création réussie d'un service LocalSystem) quand la preuve directe (sortie de commande) n'est pas récupérable.
+- **Action corrective :** prioriser systématiquement les preuves JSON/logs horodatées sur les captures d'écran quand les deux ne sont pas obtenables dans un temps raisonnable — c'est une preuve au moins aussi rigoureuse, et documentée comme telle dans le rapport.
+- **Mise à jour du planning :** aucun décalage de la date de clôture ; réduction assumée du nombre de captures graphiques au profit de preuves texte/JSON, déjà plus robustes pour le rapport final.
 
 ## Bilan de clôture et retour d'expérience (REX)
 
 À rédiger en fin de semaine (vendredi 16 octobre), une fois le projet clos.
 
-- **Résultats obtenus vs objectifs initiaux :** à compléter
-- **Respect du délai / budget / qualité :** à compléter
-- **Ce qui a bien fonctionné :** à compléter
-- **Ce qui serait à améliorer :** à compléter
-- **Compétences développées :** à compléter
-- **Suite donnée au projet :** à compléter
+- **Résultats obtenus vs objectifs initiaux :** les 4 objectifs du cahier des charges sont atteints. (1) Lab IaC déployé et fonctionnel, bien que le redéploiement complet en moins de 15 minutes n'ait pas été revalidé. (2) Test d'intrusion complet mené jusqu'à la compromission totale du domaine (DCSync), documenté à chaque étape. (3) Supervision Wazuh exécutée en parallèle de l'attaque, avec un écart de détection identifié et documenté comme un résultat valable plutôt que caché. (4) Rapport de pentest et playbook de détection rédigés et publiés sur GitHub.
+- **Respect du délai / budget / qualité :** délai respecté (clôture au jour prévu après recalage du planning sur 1 semaine) ; budget réajusté deux fois en cours de route (de ~60h/3 semaines à ~20h/1 semaine, lui-même sous tension par des frictions techniques non anticipées) — signe que l'estimation initiale était trop optimiste plutôt qu'un vrai dérapage de pilotage ; qualité jugée bonne sur la partie technique (preuves horodatées, secrets jamais publiés, distinction explicite entre identifiants « guidés » et réellement découverts) mais partie gestion de projet formelle allégée (temps réellement travaillé non chronométré au quotidien, malgré la consigne).
+- **Ce qui a bien fonctionné :** la chaîne d'attaque complète tenue en une seule journée intensive (jeudi) ; la convention systématique d'horodatage UTC et de distinction identifiants guidés/découverts, qui a évité toute ambiguïté dans le rapport final ; la découverte que le ruleset Wazuh natif (règle 92650) détectait mieux une technique que les règles custom du projet — un résultat plus riche que prévu pour le guide de détection.
+- **Ce qui serait à améliorer :** moins de temps passé à vouloir automatiser des captures d'écran sur des boîtes de dialogue protégées par conception (UAC) — un blocage à anticiper plus tôt ; chronométrer réellement le temps consacré chaque jour, comme prévu dans le suivi de projet, plutôt que de l'estimer a posteriori ; fixer un budget horaire réaliste dès le lancement plutôt que de le réviser deux fois en cours de semaine.
+- **Compétences développées :** conduite d'une chaîne d'attaque Active Directory de bout en bout (reconnaissance LDAP → vol d'identifiant → mouvement latéral → DCSync) ; lecture et évaluation de règles de détection Wazuh/Sysmon natives et custom ; rédaction d'un rapport de pentest professionnel avec scoring CVSS 3.1 argumenté ; rigueur de preuve (horodatage UTC systématique, empreintes SHA-256, non-publication des secrets).
+- **Suite donnée au projet :** publication du rapport, du playbook de détection et du journal sur GitHub ; une version anonymisée sera ajoutée au portfolio (bilelka.com). Piste identifiée pour un prolongement futur : implémenter et tester réellement la règle Wazuh proposée pour combler l'écart de détection sur l'exécution de commande distante (finding F4).
 
 ## Critères de réussite
 
