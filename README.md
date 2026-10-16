@@ -365,6 +365,34 @@ des rôles et fonctionnalités réellement installés : `AD-Domain-Services`,
 `PartOfDomain : True`, date d'installation de l'OS (13 octobre, jour du
 déploiement effectif) et service Wazuh `Running`.
 
+#### Cartographie du domaine (BloodHound)
+
+Collecte réelle avec `bloodhound-python` (compte `dave`, standard, `-c All`) :
+
+```
+$ ../../../.venv/bin/bloodhound-python -u dave -p "${DAVE_PW}" -d mini.lab -dc dc.mini.lab -ns 192.168.56.30 -c All --zip
+INFO: Found AD domain: mini.lab
+INFO: Found 2 computers
+INFO: Found 9 users
+INFO: Found 54 groups
+INFO: Found 2 gpos
+INFO: Querying computer: ws.mini.lab
+INFO: Querying computer: dc.mini.lab
+INFO: Done in 00M 00S
+```
+
+L'analyse des groupes confirme l'énumération de mercredi (`alice`/`carol`
+dans `Domain Admins` **et** `wsadmin` ; `bob` uniquement dans `wsadmin`) —
+mais la relation `AdminTo` pour WS01 est revenue **vide**, alors que le
+mouvement latéral du 15 octobre a prouvé le contraire. Vérification terrain :
+
+![Comparaison BloodHound (vide) vs Get-LocalGroupMember (wsadmin présent) sur WS01](./screenshots/2026-10-16/08-ws01-bloodhound-ecart.jpg)
+
+**WS01 · export brut `Get-LocalGroupMember`.** `MINILAB\wsadmin` est bien
+membre réel du groupe `Administrators` local — une relation que BloodHound,
+collecté avec un compte de domaine standard, n'a pas vue. Détail et
+explication technique dans le [rapport de pentest, finding F5](./rapport-pentest.md#f5--écart-entre-cartographie-automatisée-bloodhound-et-réalité-terrain).
+
 Séance consacrée à la finalisation : rapport de pentest, guide de détection,
 rapports d'avancement, bilan et retour d'expérience, puis publication.
 

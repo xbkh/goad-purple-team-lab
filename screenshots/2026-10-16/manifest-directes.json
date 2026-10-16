@@ -47,5 +47,12 @@
     "logiciel": "Bloc-notes affichant un export brut Get-ComputerInfo (console noVNC)",
     "heure_utc": "2026-10-16T14:35:00Z",
     "contenu": "Informations systeme brutes de WS01 : nom, domaine mini.lab, PartOfDomain True, date d'installation de l'OS (13/10/2026, jour du deploiement), et etat du service Wazuh (Running)."
+  },
+  {
+    "fichier": "08-ws01-bloodhound-ecart.jpg",
+    "machine": "WS01",
+    "logiciel": "Bloc-notes affichant une verification terrain (console noVNC)",
+    "heure_utc": "2026-10-16T18:41:00Z",
+    "contenu": "Comparaison brute: BloodHound (collecte dave) a trouve 0 AdminTo pour WS01, alors que Get-LocalGroupMember confirme que MINILAB\\wsadmin est reellement administrateur local. Preuve de l ecart de cartographie (finding F5 du rapport)."
   }
 ]
