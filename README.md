@@ -351,6 +351,20 @@ du `whoami`.
 `secretsdump` ci-dessus : droits de réplication AD utilisés par `alice`
 (Object Server `DS`).
 
+#### Preuves d'installation (rôles et configuration système, données brutes)
+
+![Liste brute des rôles Windows installés sur DC01](./screenshots/2026-10-16/06-dc01-roles-installes-brut.jpg)
+
+**DC01 · export brut `Get-WindowsFeature`.** Liste complète, non reformulée,
+des rôles et fonctionnalités réellement installés : `AD-Domain-Services`,
+`DNS`, `FS-FileServer`, `RSAT-AD-Tools`, `RSAT-ADDS`, etc.
+
+![Informations système brutes de WS01](./screenshots/2026-10-16/07-ws01-installation-brut.jpg)
+
+**WS01 · export brut `Get-ComputerInfo`.** Nom de machine, domaine `mini.lab`,
+`PartOfDomain : True`, date d'installation de l'OS (13 octobre, jour du
+déploiement effectif) et service Wazuh `Running`.
+
 Séance consacrée à la finalisation : rapport de pentest, guide de détection,
 rapports d'avancement, bilan et retour d'expérience, puis publication.
 

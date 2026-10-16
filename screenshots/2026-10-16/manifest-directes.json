@@ -33,5 +33,19 @@
     "logiciel": "Bloc-notes affichant un export brut Get-WinEvent (console noVNC)",
     "heure_utc": "2026-10-16T14:12:00Z",
     "contenu": "Evenement Windows System 7045 brut : service 'vwoy', fichier 'boZsxcxx.exe', compte LocalSystem - noms identiques a la sortie du psexec lance en direct dans le terminal (service cree + demarre en LocalSystem)."
+  },
+  {
+    "fichier": "06-dc01-roles-installes-brut.jpg",
+    "machine": "DC01",
+    "logiciel": "Bloc-notes affichant un export brut Get-WindowsFeature (console noVNC)",
+    "heure_utc": "2026-10-16T14:33:00Z",
+    "contenu": "Liste brute (non reformulee) des roles et fonctionnalites Windows installes sur DC01 : AD-Domain-Services, DNS, FS-FileServer, RSAT-AD-Tools, RSAT-ADDS, etc."
+  },
+  {
+    "fichier": "07-ws01-installation-brut.jpg",
+    "machine": "WS01",
+    "logiciel": "Bloc-notes affichant un export brut Get-ComputerInfo (console noVNC)",
+    "heure_utc": "2026-10-16T14:35:00Z",
+    "contenu": "Informations systeme brutes de WS01 : nom, domaine mini.lab, PartOfDomain True, date d'installation de l'OS (13/10/2026, jour du deploiement), et etat du service Wazuh (Running)."
   }
 ]
