@@ -1,330 +1,330 @@
 # GOAD Purple Team Lab
 
-**Journal du projet, résultats et captures d’écran — du 12 au 16 octobre 2026.**
+**Project log, results and screenshots — 12 to 16 October 2026.**
 
-Dernière mise à jour : **16 octobre 2026**.
+Last updated: **16 October 2026**.
 
-Projet personnel de test d’intrusion sur un environnement Active Directory
-volontairement vulnérable, basé sur [GOAD](https://github.com/Orange-Cyberdefense/GOAD).
-Wazuh permet d’observer les traces et de vérifier la détection des tests.
-Ce projet sert aussi de rendu PPE pour le cours *Techniques de gestion de projets*
-(CFC 306, Projet 5).
+Personal penetration-testing project on a deliberately vulnerable Active Directory
+environment, based on [GOAD](https://github.com/Orange-Cyberdefense/GOAD).
+Wazuh makes it possible to observe the traces and to check the detection of the tests.
+This project also serves as a PPE deliverable for the course *Project management techniques*
+(CFC 306, Project 5).
 
-## Sommaire
+## Contents
 
-- [Avancement](#avancement)
-- [Environnement et planning](#environnement-et-planning)
-- [Journal et captures d’écran](#journal-et-captures-décran)
-  - [Lundi 12 octobre — préparation](#lundi-12-octobre--préparation)
-  - [Mardi 13 octobre — installation et validation](#mardi-13-octobre--installation-et-validation)
-  - [Mercredi 14 octobre — premiers tests](#mercredi-14-octobre--premiers-tests)
-  - [Jeudi 15 octobre — mouvement latéral et DCSync](#jeudi-15-octobre--mouvement-latéral-et-dcsync)
-  - [Vendredi 16 octobre — rapport, bilan et publication](#vendredi-16-octobre--rapport-bilan-et-publication)
-- [Difficultés et décisions](#difficultés-et-décisions)
-- [Prochaines étapes](#prochaines-étapes)
-- [Documents utiles et sources](#documents-utiles-et-sources)
+- [Progress](#progress)
+- [Environment and schedule](#environment-and-schedule)
+- [Log and screenshots](#log-and-screenshots)
+  - [Monday 12 October — preparation](#monday-12-october--preparation)
+  - [Tuesday 13 October — installation and validation](#tuesday-13-october--installation-and-validation)
+  - [Wednesday 14 October — first tests](#wednesday-14-october--first-tests)
+  - [Thursday 15 October — lateral movement and DCSync](#thursday-15-october--lateral-movement-and-dcsync)
+  - [Friday 16 October — report, review and publication](#friday-16-october--report-review-and-publication)
+- [Difficulties and decisions](#difficulties-and-decisions)
+- [Next steps](#next-steps)
+- [Useful documents and sources](#useful-documents-and-sources)
 
-## Avancement
+## Progress
 
-| Étape | État au 16 octobre |
+| Step | Status as of 16 October |
 | --- | --- |
-| Installer le lab et son réseau isolé | Terminé et vérifié |
-| Installer Wazuh et recevoir les événements des deux machines | Terminé et vérifié |
-| Réaliser le test d’intrusion | Mouvement latéral et compromission du domaine obtenus |
-| Vérifier la détection de chaque technique | Mouvement latéral et DCSync corrélés dans Wazuh ; écart de détection documenté sur le 4688 |
-| Vérifier la reconstruction complète du lab | Testée réellement : 47m59s (cible 15 min non atteinte), 2 échecs corrigés en direct |
-| Rédiger le rapport, le guide de détection et le bilan | Terminé — [rapport](./rapport-pentest.md), [playbook](./playbook-detection.md), bilan dans le [cahier des charges](./cahier-des-charges.md#bilan-de-clôture-et-retour-dexpérience-rex) |
-| Publier les livrables sur le portfolio | À faire |
+| Install the lab and its isolated network | Done and verified |
+| Install Wazuh and receive events from both machines | Done and verified |
+| Carry out the penetration test | Lateral movement and domain compromise achieved |
+| Verify the detection of each technique | Lateral movement and DCSync correlated in Wazuh; detection gap documented on 4688 |
+| Verify the complete rebuild of the lab | Actually tested: 47m59s (15 min target not met), 2 failures fixed live |
+| Write the report, the detection guide and the review | Done — [report](./rapport-pentest.md), [playbook](./playbook-detection.md), review in the [project specification](./cahier-des-charges.md#bilan-de-clôture-et-retour-dexpérience-rex) |
+| Publish the deliverables on the portfolio | To do |
 
-**Le compte `bob`, compromis mercredi via une description LDAP lisible, a permis une
-exécution de code en LocalSystem sur WS01 (mouvement latéral).** Jeudi, un DCSync
-avec le compte `alice` (Domain Admins, identifiants du scénario) a extrait le hash
-et les clés Kerberos du compte `Administrator` : **compromission du domaine obtenue**.
-Vendredi, la cartographie BloodHound du domaine et le test réel de reconstruction
-complète ont tous deux été menés à terme — avec des résultats honnêtes plutôt
-qu'arrondis : un écart outillage/réalité terrain pour BloodHound (finding F5), et
-une reconstruction qui **ne tient pas** la cible de 15 minutes (47m59s réels).
+**The `bob` account, compromised on Wednesday through a readable LDAP description, allowed
+code execution as LocalSystem on WS01 (lateral movement).** On Thursday, a DCSync
+with the `alice` account (Domain Admins, scenario credentials) extracted the hash
+and Kerberos keys of the `Administrator` account: **domain compromise achieved**.
+On Friday, the BloodHound mapping of the domain and the real test of a complete rebuild
+were both carried through — with honest results rather than rounded ones:
+a tooling/field-reality gap for BloodHound (finding F5), and
+a rebuild that **does not meet** the 15-minute target (47m59s actual).
 
-## Environnement et planning
+## Environment and schedule
 
-| Élément | Configuration retenue |
+| Item | Chosen configuration |
 | --- | --- |
-| Hôte | Poste personnel sous Pop!_OS, 16 Go de RAM |
-| Virtualisation | KVM/QEMU et libvirt ; adaptation locale de GOAD MINILAB |
-| DC01 | Windows Server 2019, nom Windows `DC`, domaine `mini.lab`, `192.168.56.30` |
-| WS01 | Windows Server 2019, nom Windows `WS`, membre du domaine, `192.168.56.31` |
-| Ressources Windows | 2 vCPU et 2 Gio de RAM par VM |
-| Outils de test | Sur l’hôte pour économiser la mémoire |
-| Supervision | Manager Wazuh 4.14.0 en conteneur, limité à 1 Gio / 1 CPU, deux agents Windows |
-| Interface Wazuh | Sans indexeur ni tableau de bord ; contrôle des événements et des agents par les outils locaux |
-| Réseaux | `goad-purple-lab` et `goad-purple-mgmt`, isolés après installation |
+| Host | Personal machine running Pop!_OS, 16 GB of RAM |
+| Virtualization | KVM/QEMU and libvirt; local adaptation of GOAD MINILAB |
+| DC01 | Windows Server 2019, Windows name `DC`, domain `mini.lab`, `192.168.56.30` |
+| WS01 | Windows Server 2019, Windows name `WS`, domain member, `192.168.56.31` |
+| Windows resources | 2 vCPU and 2 GiB of RAM per VM |
+| Testing tools | On the host to save memory |
+| Monitoring | Wazuh 4.14.0 manager in a container, limited to 1 GiB / 1 CPU, two Windows agents |
+| Wazuh interface | No indexer or dashboard; events and agents checked with local tools |
+| Networks | `goad-purple-lab` and `goad-purple-mgmt`, isolated after installation |
 
-Budget prévisionnel : **20 heures au total, environ 4 heures par jour**.
-Le temps humain réellement consacré au projet reste à consigner ; les attentes
-de téléchargement et d’installation ne sont pas comptées comme du travail mesuré.
+Planned budget: **20 hours in total, about 4 hours per day**.
+The human time actually spent on the project remains to be recorded; waiting
+for downloads and installations is not counted as measured work.
 
-| Jour | Prévision et situation |
+| Day | Plan and status |
 | --- | --- |
-| Lundi 12 | Préparation du lab commencée |
-| Mardi 13 | Installation terminée et validée ; la préparation a débordé d’un jour |
-| Mercredi 14 | Reconnaissance, premier constat et captures directes |
-| Jeudi 15 | Mouvement latéral (SYSTEM sur WS01) et DCSync réussis, détections corrélées |
-| Vendredi 16 | Finalisation du rapport, bilan et publication, à réaliser |
+| Monday 12 | Lab preparation started |
+| Tuesday 13 | Installation completed and validated; preparation overran by one day |
+| Wednesday 14 | Reconnaissance, first finding and direct screenshots |
+| Thursday 15 | Lateral movement (SYSTEM on WS01) and DCSync successful, detections correlated |
+| Friday 16 | Finalising the report, review and publication, to be done |
 
-## Journal et captures d’écran
+## Log and screenshots
 
-Toutes les images publiées figurent ci-dessous, dans le journal du jour concerné.
-Les fichiers sont rangés dans [`screenshots/`](./screenshots/), par date.
+All published images appear below, in the log of the relevant day.
+The files are stored in [`screenshots/`](./screenshots/), by date.
 
-**Dates des captures :** les quatre captures directes des fenêtres Windows ont été
-prises le **14 octobre entre 09:27 et 09:31 à Zurich** (07:27–07:31 UTC).
-Pour les **12 et 13**, aucune capture originale des fenêtres n’a été conservée.
-Le suivi écrit de ces journées est présenté ci-dessous.
+**Screenshot dates:** the four direct screenshots of the Windows windows were
+taken on **14 October between 09:27 and 09:31 in Zurich** (07:27–07:31 UTC).
+For **12 and 13 October**, no original screenshot of the windows was kept.
+The written follow-up of those days is presented below.
 
-### Lundi 12 octobre — préparation
+### Monday 12 October — preparation
 
-- Préparation des dépendances et des images Windows, versions épinglées et vérifiées.
-- Normalisation de la première image Windows pour permettre le provisionnement WinRM.
-- Configuration du contrôleur et du domaine `mini.lab` à partir du scénario GOAD.
-- Installation du manager Wazuh et de l’agent sur DC01.
-- Réception d’événements réels : connexion réseau réussie (4624 / règle 100101)
-  et échec volontaire avec un compte inexistant (4625 / règle 100100).
+- Preparation of the dependencies and Windows images, pinned and verified versions.
+- Normalisation of the first Windows image to allow WinRM provisioning.
+- Configuration of the controller and of the `mini.lab` domain from the GOAD scenario.
+- Installation of the Wazuh manager and of the agent on DC01.
+- Receipt of real events: successful network logon (4624 / rule 100101)
+  and deliberate failure with a non-existent account (4625 / rule 100100).
 
-**Résultat :** la collecte sur DC01 fonctionne. Ces tests de préparation ne
-prouvent aucune compromission ; la détection DCSync reste à tester.
+**Result:** collection on DC01 works. These preparation tests do not
+prove any compromise; DCSync detection remains to be tested.
 
-### Mardi 13 octobre — installation et validation
+### Tuesday 13 October — installation and validation
 
-- Adaptation de la découverte réseau GOAD : les interfaces sont calculées par hôte.
-- Remplacement de l’image Windows 10 expirée par un serveur membre Windows Server 2019.
-- Généralisation de WS01 avec Sysprep pour lui donner une identité Windows distincte,
-  puis restauration du réseau privé et suppression de la tâche temporaire utilisée.
-- Jonction de WS01 au domaine et installation de son agent Wazuh.
-- Isolation des deux réseaux et publication des scripts et des corrections sur GitHub.
-- Correction du démarrage : DC01 est lancé avant WS01 pour faciliter la découverte du domaine.
+- Adaptation of the GOAD network discovery: interfaces are computed per host.
+- Replacement of the expired Windows 10 image with a Windows Server 2019 member server.
+- Generalisation of WS01 with Sysprep to give it a distinct Windows identity,
+  then restoration of the private network and removal of the temporary task used.
+- Joining WS01 to the domain and installing its Wazuh agent.
+- Isolation of the two networks and publication of the scripts and fixes on GitHub.
+- Startup fix: DC01 is started before WS01 to ease domain discovery.
 
-**Contrôles du 13 octobre vers 09:41 à Zurich (07:41 UTC) :**
+**Checks of 13 October around 09:41 in Zurich (07:41 UTC):**
 
-| Contrôle | Résultat observé |
+| Check | Observed result |
 | --- | --- |
-| DC01 | `DC`, domaine `mini.lab` ; DNS, Kerberos, LDAP, SMB et WinRM accessibles |
-| WS01 | `WS`, domaine `mini.lab` ; SMB et WinRM accessibles |
-| Relation d’approbation WS01 → DC01 | `Test-ComputerSecureChannel : True` ; `nltest : NERR_Success` |
-| Agents | `dc` (001) et `ws` (002) actifs ; service Wazuh démarré sur les deux hôtes |
-| Collecte DC01 | Événement 4624 / règle 100101 reçu à 07:41:14.582 UTC |
-| Collecte WS01 | Événement 4624 / règle 100101 reçu à 07:41:15.531 UTC |
-| Isolation | Aucun élément `forward`, relais DNS désactivé sur les deux réseaux |
-| Windows | Server 2019 sur les deux VM ; évaluations actives lors du contrôle |
+| DC01 | `DC`, domain `mini.lab`; DNS, Kerberos, LDAP, SMB and WinRM reachable |
+| WS01 | `WS`, domain `mini.lab`; SMB and WinRM reachable |
+| WS01 → DC01 trust relationship | `Test-ComputerSecureChannel : True`; `nltest : NERR_Success` |
+| Agents | `dc` (001) and `ws` (002) active; Wazuh service started on both hosts |
+| DC01 collection | Event 4624 / rule 100101 received at 07:41:14.582 UTC |
+| WS01 collection | Event 4624 / rule 100101 received at 07:41:15.531 UTC |
+| Isolation | No `forward` element, DNS relay disabled on both networks |
+| Windows | Server 2019 on both VMs; evaluations active during the check |
 
-Les connexions ci-dessus proviennent de l’administration de validation.
-Des événements 4662 / règle 100102 apparaissent pendant le provisionnement :
-**ils ne prouvent pas une attaque DCSync**.
+The logons above come from the validation administration.
+4662 events / rule 100102 appear during provisioning:
+**they do not prove a DCSync attack**.
 
-### Mercredi 14 octobre — premiers tests
+### Wednesday 14 October — first tests
 
-**Objectif :** repérer les services du lab et réaliser un premier test avec une
-trace Wazuh correspondante. Les tests concernent uniquement DC01 et WS01.
+**Objective:** identify the lab's services and carry out a first test with a
+matching Wazuh trace. The tests only concern DC01 and WS01.
 
-1. Redémarrage des réseaux, du manager Wazuh, de DC01 puis de WS01.
-2. Contrôle du domaine, de la relation d’approbation et des agents.
-3. Scan de douze ports TCP sur chaque machine.
-4. Lecture LDAP avec le compte `dave`, fourni par le scénario GOAD.
-5. Une connexion SMB comme `bob`, avec le mot de passe découvert dans sa description.
-6. Recherche et corrélation de l’événement de connexion côté Wazuh.
+1. Restart of the networks, the Wazuh manager, DC01 and then WS01.
+2. Check of the domain, the trust relationship and the agents.
+3. Scan of twelve TCP ports on each machine.
+4. LDAP read with the `dave` account, provided by the GOAD scenario.
+5. One SMB connection as `bob`, with the password discovered in its description.
+6. Search and correlation of the logon event on the Wazuh side.
 
-**Il s’agit d’un exercice guidé : le compte initial est connu grâce au scénario.**
-Les mots de passe et les journaux bruts restent hors du dépôt public.
+**This is a guided exercise: the initial account is known thanks to the scenario.**
+Passwords and raw logs stay out of the public repository.
 
-#### Résultats des premiers tests
+#### Results of the first tests
 
-##### Les deux rôles du lab sont visibles
+##### The lab's two roles are visible
 
-| Machine | Rôle | Services ouverts parmi les ports testés |
+| Machine | Role | Open services among the ports tested |
 | --- | --- | --- |
-| DC01 | Serveur central du domaine | DNS, Kerberos, annuaire LDAP, partage SMB, administration Windows et bureau à distance |
-| WS01 | Serveur membre du domaine | Partage SMB, administration Windows et bureau à distance |
+| DC01 | Central domain server | DNS, Kerberos, LDAP directory, SMB share, Windows administration and remote desktop |
+| WS01 | Domain member server | SMB share, Windows administration and remote desktop |
 
-Le scan est limité aux ports 53, 88, 135, 139, 389, 445, 464, 636, 3268, 3269,
-3389 et 5985. Il ne constitue pas un inventaire exhaustif de tous les ports.
-La cartographie BloodHound n'a pas encore été réalisée.
+The scan is limited to ports 53, 88, 135, 139, 389, 445, 464, 636, 3268, 3269,
+3389 and 5985. It is not an exhaustive inventory of all ports.
+The BloodHound mapping has not been carried out yet.
 
-##### Une première faiblesse est confirmée
+##### A first weakness is confirmed
 
-Le compte `dave` peut lire la description du compte `bob`. Cette description
-contient le mot de passe de `bob` en clair. Une connexion SMB comme `bob` a
-ensuite réussi sur DC01 avec cette valeur, sans devinette ni essai de dictionnaire.
-Le mot de passe reste masqué et n'est pas publié.
+The `dave` account can read the description of the `bob` account. This description
+contains `bob`'s password in clear text. An SMB connection as `bob` then
+succeeded on DC01 with that value, with no guessing or dictionary attempts.
+The password stays masked and is not published.
 
-**Conséquence démontrée :** un utilisateur du domaine peut récupérer un autre
-compte à partir d'un renseignement lisible dans l'annuaire.
+**Demonstrated consequence:** a domain user can take over another
+account from information readable in the directory.
 
-**Correction proposée :** retirer les mots de passe des descriptions, changer
-le mot de passe exposé et vérifier les droits accordés au compte concerné.
-Le lab reste volontairement vulnérable pendant l'exercice ; cette correction
-n'a pas été appliquée aux machines de test.
+**Proposed fix:** remove passwords from descriptions, change
+the exposed password and check the rights granted to the account concerned.
+The lab remains deliberately vulnerable during the exercise; this fix
+was not applied to the test machines.
 
-La lecture LDAP montre aussi `bob` dans `wsadmin`, ainsi que `alice` et `carol`
-dans `Domain Admins`. Ces appartenances ne prouvent pas encore une exécution
-sur WS01 ni une compromission du domaine.
+The LDAP read also shows `bob` in `wsadmin`, as well as `alice` and `carol`
+in `Domain Admins`. These memberships do not yet prove execution
+on WS01 or a domain compromise.
 
-##### Wazuh a enregistré la connexion
+##### Wazuh recorded the logon
 
-| Champ | Valeur observée |
+| Field | Observed value |
 | --- | --- |
-| Heure de réception par Wazuh | 14 octobre 2026, 08:45:11 à Zurich (06:45:11 UTC) |
+| Time received by Wazuh | 14 October 2026, 08:45:11 in Zurich (06:45:11 UTC) |
 | Machine | DC01, agent dc |
-| Compte | bob |
-| Événement Windows | 4624, ouverture de session réseau, type 3 |
-| Règle Wazuh | 100101 |
-| Source | Hôte de test du lab, 192.168.56.1 |
+| Account | bob |
+| Windows event | 4624, network logon, type 3 |
+| Wazuh rule | 100101 |
+| Source | Lab test host, 192.168.56.1 |
 
-Le test s'est déroulé à 06:45:10–06:45:11 UTC ; l'alerte a été reçue à
-06:45:11.965 UTC. La concordance porte sur l'heure, le compte, la source et la machine.
-La règle détecte une connexion réseau ; elle ne démontre pas à elle seule le vol
-du mot de passe ni la lecture de sa description LDAP.
+The test took place at 06:45:10–06:45:11 UTC; the alert was received at
+06:45:11.965 UTC. The match covers the time, the account, the source and the machine.
+The rule detects a network logon; it does not by itself demonstrate the theft
+of the password or the reading of its LDAP description.
 
 
-#### Capture directe 1 — WS enregistré dans Active Directory
+#### Direct screenshot 1 — WS registered in Active Directory
 
-**DC01 · Active Directory Users and Computers · 14 octobre, 09:27 à Zurich.**
-Le conteneur `Computers` de `mini.lab` contient l’objet `WS`. Cette vue montre
-son enregistrement dans l’annuaire ; elle ne teste pas la relation d’approbation.
+**DC01 · Active Directory Users and Computers · 14 October, 09:27 in Zurich.**
+The `Computers` container of `mini.lab` contains the `WS` object. This view shows
+its registration in the directory; it does not test the trust relationship.
 
-![Console Active Directory sur DC01 : objet WS dans mini.lab](./screenshots/2026-10-14/01-dc01-active-directory.jpg)
+![Active Directory console on DC01: WS object in mini.lab](./screenshots/2026-10-14/01-dc01-active-directory.jpg)
 
-#### Capture directe 2 — contrôleur de domaine
+#### Direct screenshot 2 — domain controller
 
-**DC01 · même console · 14 octobre, 09:30 à Zurich.**
-Le conteneur `Domain Controllers` contient `DC`, avec `GC` pour catalogue global.
+**DC01 · same console · 14 October, 09:30 in Zurich.**
+The `Domain Controllers` container contains `DC`, with `GC` for global catalog.
 
-![Console Active Directory : DC est le contrôleur de domaine](./screenshots/2026-10-14/02-dc01-controleur-domaine.jpg)
+![Active Directory console: DC is the domain controller](./screenshots/2026-10-14/02-dc01-controleur-domaine.jpg)
 
-#### Capture directe 3 — domaine et service Wazuh dans PowerShell
+#### Direct screenshot 3 — domain and Wazuh service in PowerShell
 
-**WS01 · Windows PowerShell · 14 octobre, 09:30 à Zurich.**
-La session `MINILAB\vagrant` affiche le nom `WS`, le domaine `mini.lab`,
-`PartOfDomain : True` et le service `WazuhSvc` à l’état `Running`.
+**WS01 · Windows PowerShell · 14 October, 09:30 in Zurich.**
+The `MINILAB\vagrant` session shows the name `WS`, the domain `mini.lab`,
+`PartOfDomain : True` and the `WazuhSvc` service in the `Running` state.
 
-![PowerShell sur WS01 : domaine mini.lab et service Wazuh démarré](./screenshots/2026-10-14/03-ws01-domaine-wazuh.jpg)
+![PowerShell on WS01: mini.lab domain and Wazuh service started](./screenshots/2026-10-14/03-ws01-domaine-wazuh.jpg)
 
-#### Capture directe 4 — agent Wazuh dans les services Windows
+#### Direct screenshot 4 — Wazuh agent in the Windows services
 
-**WS01 · Services Windows · 14 octobre, 09:31 à Zurich.**
-Le service sélectionné affiche `Wazuh`, l’état `Running` et le démarrage `Automatic`.
-Ces deux captures de service établissent son état local ; la réception côté
-manager est documentée par les événements corrélés ci-dessus.
+**WS01 · Windows Services · 14 October, 09:31 in Zurich.**
+The selected service shows `Wazuh`, the `Running` state and the `Automatic` startup.
+These two screenshots of the service establish its local state; receipt on the
+manager side is documented by the correlated events above.
 
-![Services Windows sur WS01 : agent Wazuh Running et Automatic](./screenshots/2026-10-14/04-ws01-services-wazuh.jpg)
+![Windows Services on WS01: Wazuh agent Running and Automatic](./screenshots/2026-10-14/04-ws01-services-wazuh.jpg)
 
-Ces quatre images sont des captures sans retouche des consoles réelles des VM,
-consultées via noVNC. L’horloge Windows en bas des images est en UTC.
-Elles montrent les vérifications du 14, sans prouver à elles seules les attaques.
+These four images are unretouched screenshots of the real consoles of the VMs,
+viewed through noVNC. The Windows clock at the bottom of the images is in UTC.
+They show the checks of the 14th, without proving the attacks on their own.
 
-#### Correction des horloges et traçabilité
+#### Clock correction and traceability
 
-Un décalage d’environ **sept heures d’avance** des horloges Windows a été
-identifié. Les heures de test sur l’hôte et de réception Wazuh sont distinguées
-des heures internes Windows. Le test initial utilisait NTLM ; aucun succès
-Kerberos n’est revendiqué.
+A shift of about **seven hours ahead** of the Windows clocks was
+identified. The test times on the host and the Wazuh receipt times are distinguished
+from the internal Windows times. The initial test used NTLM; no Kerberos
+success is claimed.
 
-Les deux VM ont été remises à l’heure UTC. Une nouvelle lecture vers 06:59 UTC
-a mesuré environ 1,55 s d’écart pour DC01 et 0,52 s pour WS01. Le domaine et
-les services Wazuh ont également été contrôlés. Les traces initiales sont conservées
-avec leurs heures d’origine.
+Both VMs were reset to UTC time. A new reading around 06:59 UTC
+measured about 1.55 s of drift for DC01 and 0.52 s for WS01. The domain and
+the Wazuh services were also checked. The initial traces are kept
+with their original times.
 
-### Jeudi 15 octobre — mouvement latéral et DCSync
+### Thursday 15 October — lateral movement and DCSync
 
-**Objectif :** vérifier si les identifiants de `bob` (trouvés mercredi) permettent une
-réelle exécution de code sur WS01, puis tenter la compromission du domaine par DCSync
-avec un compte Domain Admins du scénario, en corrélant chaque étape côté Wazuh.
+**Objective:** check whether `bob`'s credentials (found on Wednesday) allow
+real code execution on WS01, then attempt the domain compromise through DCSync
+with a Domain Admins account from the scenario, correlating each step on the Wazuh side.
 
-#### Mouvement latéral
+#### Lateral movement
 
-1. Redécouverte du mot de passe de `bob` par lecture LDAP (même technique que mercredi).
-2. `wmiexec.py` échoue côté client : la connexion DCOM reste bloquée après la sélection
-   du port RPC dynamique (49667), bien que ce port soit ouvert. Cause non confirmée.
-3. `smbexec.py` puis `psexec.py` (deux tentatives) : le partage `ADMIN$` est accessible
-   en écriture avec les identifiants de `bob`, un binaire est déposé, un service Windows
-   est créé puis démarré. **Les trois services tournent en `LocalSystem`** — démontrant
-   une exécution de code avec les plus hauts privilèges sur WS01, même si la sortie de
-   la commande (`whoami`) n'a pas pu être récupérée côté client (blocage sur le canal de
-   sortie, sans incidence sur le résultat de l'attaque).
-4. Contrôle après coup : les trois services se sont supprimés automatiquement
-   (comportement normal des outils Impacket) ; aucun artefact résiduel sur WS01.
+1. Rediscovery of `bob`'s password through LDAP read (same technique as Wednesday).
+2. `wmiexec.py` fails on the client side: the DCOM connection stays blocked after the selection
+   of the dynamic RPC port (49667), even though that port is open. Cause not confirmed.
+3. `smbexec.py` then `psexec.py` (two attempts): the `ADMIN$` share is writable
+   with `bob`'s credentials, a binary is dropped, a Windows service
+   is created then started. **The three services run as `LocalSystem`** — demonstrating
+   code execution with the highest privileges on WS01, even though the output of
+   the command (`whoami`) could not be retrieved on the client side (blocking on the output
+   channel, with no impact on the result of the attack).
+4. Check afterwards: the three services deleted themselves automatically
+   (normal behaviour of the Impacket tools); no residual artefact on WS01.
 
-**Observation annexe :** des connexions réseau répétées du compte `carol` (Domain
-Admins) depuis DC01 vers WS01 ont été repérées pendant le test, toutes les ~30
-secondes. Vérification faite (`query session`) : aucune session interactive, logon
-de type réseau uniquement — à l'époque non élucidé, attribué à une activité
-d'arrière-plan du lab GOAD. **Mise à jour du 16 octobre :** la cause exacte est
-identifiée lors du rejeu complet du provisioning — une tâche planifiée
-(`vulns/schedule`, `connect_bot`) exécute `bot.ps1` toutes les minutes sur DC01
-en utilisant un identifiant d'`alice` stocké dans le Gestionnaire d'identifiants
-(CredSSP) ; ce n'est pas `carol` elle-même mais une simulation intentionnelle du
-scénario MINILAB, sans lien avec nos tests — confirmé, pas juste supposé.
+**Side observation:** repeated network logons by the `carol` account (Domain
+Admins) from DC01 to WS01 were spotted during the test, every ~30
+seconds. Check made (`query session`): no interactive session, network-type
+logon only — unexplained at the time, attributed to background activity
+of the GOAD lab. **Update of 16 October:** the exact cause was
+identified during the full replay of the provisioning — a scheduled task
+(`vulns/schedule`, `connect_bot`) runs `bot.ps1` every minute on DC01
+using a credential of `alice` stored in the Credential Manager
+(CredSSP); it is not `carol` herself but an intentional simulation of the
+MINILAB scenario, unrelated to our tests — confirmed, not just assumed.
 
-#### Compromission du domaine (DCSync)
+#### Domain compromise (DCSync)
 
-Avec les identifiants d'`alice` (Domain Admins, fournis par le scénario GOAD — test
-guidé, comme pour `dave` mercredi) :
+With `alice`'s credentials (Domain Admins, provided by the GOAD scenario — guided test,
+as with `dave` on Wednesday):
 
 ```
 secretsdump.py -just-dc-user administrator mini.lab/alice:***@192.168.56.30
 ```
 
-**Résultat :** extraction réussie du hash NTLM et des clés Kerberos (AES256, AES128,
-DES) du compte `Administrator`. Réplication volontairement limitée à un seul compte
-(`-just-dc-user administrator`), conformément au cahier des charges. Secrets non
-publiés, conservés uniquement en local.
+**Result:** successful extraction of the NTLM hash and Kerberos keys (AES256, AES128,
+DES) of the `Administrator` account. Replication deliberately limited to a single account
+(`-just-dc-user administrator`), in line with the project specification. Secrets not
+published, kept only locally.
 
-#### Détection côté Wazuh
+#### Detection on the Wazuh side
 
-| Technique | Règle déclenchée | Résultat |
+| Technique | Rule triggered | Result |
 | --- | --- | --- |
-| Logons réseau de `bob` (4 tentatives) | 100101 (custom, niveau 6) | 28 événements 4624 corrélés, agent `ws`, source 192.168.56.1 |
-| Dépôt de service via un partage admin (`smbexec`/`psexec`) | **92650** (règle Wazuh **native**, niveau **12**) | 2 alertes : *"New Windows Service Created to start from windows root path. Suspicious event as the binary may have been dropped using Windows Admin Shares."* — détection plus sévère que toute règle custom du projet |
-| Création de process (4688) pendant les tests | 67027 (règle générique par défaut, niveau 3) | 729 occurrences, mais sans corrélation au compte ni au contexte — **écart de détection documenté** : collecté et techniquement alerté, mais noyé dans le bruit, inexploitable pour un triage |
-| DCSync (droits de réplication AD) | 100102 (custom, niveau 10) | 3 événements 4662, compte `alice`, GUID `1131f6aa`/`1131f6ad` (DS-Replication-Get-Changes / -All), horodatage concordant à la seconde près avec le test |
+| Network logons by `bob` (4 attempts) | 100101 (custom, level 6) | 28 correlated 4624 events, agent `ws`, source 192.168.56.1 |
+| Service drop via an admin share (`smbexec`/`psexec`) | **92650** (**native** Wazuh rule, level **12**) | 2 alerts: *"New Windows Service Created to start from windows root path. Suspicious event as the binary may have been dropped using Windows Admin Shares."* — a more severe detection than any custom rule of the project |
+| Process creation (4688) during the tests | 67027 (generic default rule, level 3) | 729 occurrences, but with no correlation to the account or the context — **detection gap documented**: collected and technically alerted, but drowned in noise, unusable for triage |
+| DCSync (AD replication rights) | 100102 (custom, level 10) | 3 4662 events, account `alice`, GUID `1131f6aa`/`1131f6ad` (DS-Replication-Get-Changes / -All), timestamp matching the test to the second |
 
-**Point marquant pour le rapport final :** la détection la plus sévère du jour (niveau 12)
-vient d'une règle Wazuh **par défaut**, pas d'une règle écrite pour ce projet — un bon
-argument pour la partie « valeur du ruleset de base » du guide de détection.
+**Key point for the final report:** the most severe detection of the day (level 12)
+comes from a **default** Wazuh rule, not from a rule written for this project — a good
+argument for the "value of the base ruleset" part of the detection guide.
 
-![Preuve mouvement latéral sur WS01 : logons bob et services LocalSystem](./screenshots/2026-10-15/01-ws01-mouvement-lateral.jpg)
+![Lateral movement proof on WS01: bob logons and LocalSystem services](./screenshots/2026-10-15/01-ws01-mouvement-lateral.jpg)
 
-**WS01 · console PowerShell · 15 octobre, 08:36 UTC.** Capture du contenu d'un
-fichier de preuve généré depuis les journaux Windows, affichant les horodatages
-des logons de `bob` et des trois créations de service en `LocalSystem`.
+**WS01 · PowerShell console · 15 October, 08:36 UTC.** Capture of the content of an
+evidence file generated from the Windows logs, showing the timestamps
+of `bob`'s logons and of the three LocalSystem service creations.
 
-### Vendredi 16 octobre — rapport, bilan et publication
+### Friday 16 October — report, review and publication
 
-Relance du lab (VMs et manager Wazuh arrêtés pendant la nuit, redémarrés et
-revalidés) : domaine joint, agents Wazuh `Running` sur les deux machines.
+Restart of the lab (VMs and Wazuh manager stopped overnight, restarted and
+revalidated): domain joined, Wazuh agents `Running` on both machines.
 
-![Server Manager sur DC01 : rôles AD DS, DNS et File and Storage Services installés](./screenshots/2026-10-16/01-dc01-server-manager-roles.jpg)
+![Server Manager on DC01: AD DS, DNS and File and Storage Services roles installed](./screenshots/2026-10-16/01-dc01-server-manager-roles.jpg)
 
-**DC01 · Server Manager · 16 octobre, 06:27 UTC.** Tableau de bord confirmant
-les 3 rôles installés (AD DS, DNS, File and Storage Services) — preuve de
-l'installation du contrôleur de domaine, complémentaire aux vérifications
-WinRM déjà publiées.
+**DC01 · Server Manager · 16 October, 06:27 UTC.** Dashboard confirming
+the 3 installed roles (AD DS, DNS, File and Storage Services) — proof of
+the installation of the domain controller, complementary to the WinRM checks
+already published.
 
-![Synthèse des détections Wazuh affichée dans le Bloc-notes sur WS01](./screenshots/2026-10-16/02-ws01-wazuh-synthese.jpg)
+![Summary of the Wazuh detections displayed in Notepad on WS01](./screenshots/2026-10-16/02-ws01-wazuh-synthese.jpg)
 
-**WS01 · Bloc-notes · 16 octobre, 07:08 UTC.** Récapitulatif des alertes
-Wazuh déclenchées sur l'ensemble du projet : état de l'agent, et comptage par
-règle (100100, 100101, 100102, 92650) sur les journées du 14 et du 15.
+**WS01 · Notepad · 16 October, 07:08 UTC.** Summary of the Wazuh alerts
+triggered across the whole project: agent state, and count per
+rule (100100, 100101, 100102, 92650) over the days of the 14th and 15th.
 
-#### Rejeu en direct des deux techniques, avec preuves brutes
+#### Live replay of the two techniques, with raw evidence
 
-Pour documenter chaque étape de façon vérifiable, le mouvement latéral et le
-DCSync ont été rejoués en direct dans un terminal, puis chaque trace a été
-récupérée sous forme d'export **brut** (`Get-WinEvent`, non reformulé) plutôt
-que résumée.
+To document each step in a verifiable way, the lateral movement and the
+DCSync were replayed live in a terminal, then each trace was
+retrieved as a **raw** export (`Get-WinEvent`, not reworded) rather than
+summarised.
 
-**Terminal (Linux, hôte du lab) :**
+**Terminal (Linux, lab host):**
 
 ```
-$ export BOB_PW=$(.venv/bin/python get-bob-pw.py)   # mot de passe redécouvert par LDAP, jamais affiché
+$ export BOB_PW=$(.venv/bin/python get-bob-pw.py)   # password rediscovered through LDAP, never displayed
 $ date -u && timeout 30 .venv/bin/psexec.py "mini.lab/bob:${BOB_PW}@192.168.56.31" whoami && date -u
 Fri 16 Oct 14:01:11 UTC 2026
 Impacket v0.13.1
@@ -341,42 +341,42 @@ Administrator:500:aad3b435b51404eeaad3b435b51404ee:c66d72021a2d4744409969a581a17
 Fri 16 Oct 14:02:07 UTC 2026
 ```
 
-![Événement Windows Security 4624 brut sur WS01, compte bob](./screenshots/2026-10-16/03-ws01-event-4624-brut.jpg)
+![Raw Windows Security event 4624 on WS01, bob account](./screenshots/2026-10-16/03-ws01-event-4624-brut.jpg)
 
-**WS01 · export brut `Get-WinEvent` · 14:01:11 UTC.** Même seconde que la
-commande `psexec` ci-dessus : logon réseau (type 3) du compte `bob`.
+**WS01 · raw `Get-WinEvent` export · 14:01:11 UTC.** Same second as the
+`psexec` command above: network logon (type 3) of the `bob` account.
 
-![Événement Windows System 7045 brut sur WS01, service vwoy](./screenshots/2026-10-16/05-ws01-event-7045-service-brut.jpg)
+![Raw Windows System event 7045 on WS01, vwoy service](./screenshots/2026-10-16/05-ws01-event-7045-service-brut.jpg)
 
-**WS01 · export brut · 14:01:19 UTC.** Service `vwoy`, fichier
-`boZsxcxx.exe`, compte `LocalSystem` — noms strictement identiques à la
-sortie du terminal : preuve directe que le service a bien été créé et
-démarré avec les plus hauts privilèges, indépendamment de la récupération
-du `whoami`.
+**WS01 · raw export · 14:01:19 UTC.** Service `vwoy`, file
+`boZsxcxx.exe`, account `LocalSystem` — names strictly identical to the
+terminal output: direct proof that the service was indeed created and
+started with the highest privileges, independently of the retrieval
+of the `whoami`.
 
-![Événement Windows Security 4662 brut sur DC01, DCSync par alice](./screenshots/2026-10-16/04-dc01-event-4662-dcsync-brut.jpg)
+![Raw Windows Security event 4662 on DC01, DCSync by alice](./screenshots/2026-10-16/04-dc01-event-4662-dcsync-brut.jpg)
 
-**DC01 · export brut · 14:02:07 UTC.** Même seconde que la commande
-`secretsdump` ci-dessus : droits de réplication AD utilisés par `alice`
+**DC01 · raw export · 14:02:07 UTC.** Same second as the `secretsdump`
+command above: AD replication rights used by `alice`
 (Object Server `DS`).
 
-#### Preuves d'installation (rôles et configuration système, données brutes)
+#### Installation evidence (roles and system configuration, raw data)
 
-![Liste brute des rôles Windows installés sur DC01](./screenshots/2026-10-16/06-dc01-roles-installes-brut.jpg)
+![Raw list of the Windows roles installed on DC01](./screenshots/2026-10-16/06-dc01-roles-installes-brut.jpg)
 
-**DC01 · export brut `Get-WindowsFeature`.** Liste complète, non reformulée,
-des rôles et fonctionnalités réellement installés : `AD-Domain-Services`,
+**DC01 · raw `Get-WindowsFeature` export.** Complete, unreworded list
+of the roles and features actually installed: `AD-Domain-Services`,
 `DNS`, `FS-FileServer`, `RSAT-AD-Tools`, `RSAT-ADDS`, etc.
 
-![Informations système brutes de WS01](./screenshots/2026-10-16/07-ws01-installation-brut.jpg)
+![Raw system information of WS01](./screenshots/2026-10-16/07-ws01-installation-brut.jpg)
 
-**WS01 · export brut `Get-ComputerInfo`.** Nom de machine, domaine `mini.lab`,
-`PartOfDomain : True`, date d'installation de l'OS (13 octobre, jour du
-déploiement effectif) et service Wazuh `Running`.
+**WS01 · raw `Get-ComputerInfo` export.** Machine name, domain `mini.lab`,
+`PartOfDomain : True`, OS installation date (13 October, day of the
+actual deployment) and Wazuh service `Running`.
 
-#### Cartographie du domaine (BloodHound)
+#### Domain mapping (BloodHound)
 
-Collecte réelle avec `bloodhound-python` (compte `dave`, standard, `-c All`) :
+Real collection with `bloodhound-python` (`dave` account, standard, `-c All`):
 
 ```
 $ ../../../.venv/bin/bloodhound-python -u dave -p "${DAVE_PW}" -d mini.lab -dc dc.mini.lab -ns 192.168.56.30 -c All --zip
@@ -390,142 +390,142 @@ INFO: Querying computer: dc.mini.lab
 INFO: Done in 00M 00S
 ```
 
-L'analyse des groupes confirme l'énumération de mercredi (`alice`/`carol`
-dans `Domain Admins` **et** `wsadmin` ; `bob` uniquement dans `wsadmin`) —
-mais la relation `AdminTo` pour WS01 est revenue **vide**, alors que le
-mouvement latéral du 15 octobre a prouvé le contraire. Vérification terrain :
+The group analysis confirms Wednesday's enumeration (`alice`/`carol`
+in `Domain Admins` **and** `wsadmin`; `bob` only in `wsadmin`) —
+but the `AdminTo` relationship for WS01 came back **empty**, whereas the
+lateral movement of 15 October proved the opposite. Field verification:
 
-![Comparaison BloodHound (vide) vs Get-LocalGroupMember (wsadmin présent) sur WS01](./screenshots/2026-10-16/08-ws01-bloodhound-ecart.jpg)
+![BloodHound (empty) vs Get-LocalGroupMember (wsadmin present) comparison on WS01](./screenshots/2026-10-16/08-ws01-bloodhound-ecart.jpg)
 
-**WS01 · export brut `Get-LocalGroupMember`.** `MINILAB\wsadmin` est bien
-membre réel du groupe `Administrators` local — une relation que BloodHound,
-collecté avec un compte de domaine standard, n'a pas vue. Détail et
-explication technique dans le [rapport de pentest, finding F5](./rapport-pentest.md#f5--écart-entre-cartographie-automatisée-bloodhound-et-réalité-terrain).
+**WS01 · raw `Get-LocalGroupMember` export.** `MINILAB\wsadmin` is indeed a
+real member of the local `Administrators` group — a relationship that BloodHound,
+collected with a standard domain account, did not see. Detail and
+technical explanation in the [pentest report, finding F5](./rapport-pentest.md#f5--écart-entre-cartographie-automatisée-bloodhound-et-réalité-terrain).
 
-**Confirmation apportée plus tard dans la journée** : le rejeu complet du
-provisioning (voir ci-dessous) a montré la tâche Ansible exacte qui crée
-cette relation — `Add domain users to local groups` → `Administrators:
-[MINILAB\wsadmin]` sur WS01, configurée en modifiant directement le SAM
-local de la machine, pas via une GPO. C'est précisément le mécanisme qui
-échappe à une collecte BloodHound basée sur LDAP/GPO.
+**Confirmation obtained later in the day**: the full replay of the
+provisioning (see below) showed the exact Ansible task that creates
+this relationship — `Add domain users to local groups` → `Administrators:
+[MINILAB\wsadmin]` on WS01, configured by directly modifying the machine's
+local SAM, not through a GPO. This is precisely the mechanism that
+escapes a BloodHound collection based on LDAP/GPO.
 
-#### Validation de la reconstruction complète depuis zéro
+#### Validation of the complete rebuild from scratch
 
-**Objectif du cahier des charges :** redéploiement complet du lab en moins
-de 15 minutes. Ce test n'avait jamais été fait réellement jusqu'ici — toutes
-les validations précédentes portaient sur des VM déjà provisionnées. Voici
-le résultat réel, sans arrondi à la hausse.
+**Project specification objective:** complete redeployment of the lab in less
+than 15 minutes. This test had never actually been done until now — all
+the previous validations concerned VMs that were already provisioned. Here is
+the real result, without rounding in our favour.
 
-**Chronologie complète (`vagrant destroy -f` → lab validé, UTC) :**
+**Full timeline (`vagrant destroy -f` → lab validated, UTC):**
 
-| Heure | Événement |
+| Time | Event |
 | --- | --- |
-| 18:43:37 | `vagrant destroy -f` sur les deux VM |
-| 18:43:37–18:47:23 | `make up` (relance des VM depuis la box, Sysprep de WS01) |
-| **18:47:23** | **Échec n°1** — `generalize-member.py` lève une exception : l'interface réseau de WS01 obtient une adresse link-local (`169.254.x.x`) au lieu de `192.168.56.31` après le redémarrage post-Sysprep (ré-énumération des cartes réseau non déterministe) |
-| 18:48–18:52 | Diagnostic : IP corrigée manuellement, `make provision` relancé |
-| **18:49:09** | **Échec n°2** — la tâche Ansible `Upgrade module PowerShellGet` échoue : besoin d'accès Internet pour télécharger le fournisseur `NuGet`, or le réseau `goad-purple-mgmt` était resté **isolé** (sans NAT) depuis la session du 13 octobre — un état qui persiste indépendamment de la destruction/recréation des VM |
-| 18:52:39 | NAT réactivé temporairement sur `goad-purple-mgmt` (depuis sa définition d'origine), **avec autorisation explicite** avant toute modification réseau |
-| 18:52–18:58 | VM redémarrées au niveau hyperviseur pour se rattacher au pont réseau recréé ; fuseau horaire corrigé en UTC (même symptôme que le 14 octobre — horloge décalée de 7h, root cause jamais corrigée durablement) |
-| 18:58:50 | `make provision` relancé |
-| 19:27:20–19:29:30 | Installation des agents Wazuh (`wazuh/install-agents.yml`), après une **3ᵉ erreur** de variables d'environnement Ansible oubliées (corrigée immédiatement, sans impact sur le lab) |
-| 19:30:00 | Ré-isolation des deux réseaux (`scripts/isolate.sh`) — confirmée sans transfert extérieur ni relais DNS |
-| **19:31:36** | **Validation finale :** domaine joint sur les deux machines, Wazuh `Running` sur les deux, 5067 alertes déjà collectées |
+| 18:43:37 | `vagrant destroy -f` on both VMs |
+| 18:43:37–18:47:23 | `make up` (restart of the VMs from the box, Sysprep of WS01) |
+| **18:47:23** | **Failure no. 1** — `generalize-member.py` raises an exception: WS01's network interface gets a link-local address (`169.254.x.x`) instead of `192.168.56.31` after the post-Sysprep reboot (non-deterministic re-enumeration of the network cards) |
+| 18:48–18:52 | Diagnosis: IP fixed manually, `make provision` relaunched |
+| **18:49:09** | **Failure no. 2** — the Ansible task `Upgrade module PowerShellGet` fails: Internet access is needed to download the `NuGet` provider, yet the `goad-purple-mgmt` network had stayed **isolated** (no NAT) since the session of 13 October — a state that persists independently of the destruction/recreation of the VMs |
+| 18:52:39 | NAT temporarily re-enabled on `goad-purple-mgmt` (from its original definition), **with explicit authorisation** before any network change |
+| 18:52–18:58 | VMs restarted at the hypervisor level to reattach to the recreated network bridge; time zone fixed to UTC (same symptom as on 14 October — clock 7h off, root cause never durably fixed) |
+| 18:58:50 | `make provision` relaunched |
+| 19:27:20–19:29:30 | Installation of the Wazuh agents (`wazuh/install-agents.yml`), after a **3rd error** of forgotten Ansible environment variables (fixed immediately, with no impact on the lab) |
+| 19:30:00 | Re-isolation of the two networks (`scripts/isolate.sh`) — confirmed with no outside forwarding or DNS relay |
+| **19:31:36** | **Final validation:** domain joined on both machines, Wazuh `Running` on both, 5067 alerts already collected |
 
-**Durée totale : 47 minutes 59 secondes. Cible du cahier des charges (< 15
-minutes) : non atteinte.**
+**Total duration: 47 minutes 59 seconds. Project specification target (< 15
+minutes): not met.**
 
-**Ce que ça signifie réellement :** même en comptant uniquement le
-run réussi (sans les deux échecs), le provisioning complet — domaine AD,
-DNS, comptes du scénario, droits, Wazuh — prend environ **30 minutes**.
-L'automatisation existante (`make up` + `make provision` +
-`install-agents.yml`) fonctionne bien techniquement (0 échec Ansible sur
-l'ensemble du run réussi, hors les 2 problèmes d'infrastructure en amont),
-mais elle **suppose un environnement déjà dans son état initial** : elle ne
-gère pas la réouverture du réseau de management après une isolation
-précédente, et elle est sensible à la ré-énumération des interfaces réseau
-après Sysprep. Ce sont deux limites réelles de l'automatisation, pas des
-échecs ponctuels du lab.
+**What this really means:** even counting only the successful
+run (without the two failures), the complete provisioning — AD domain,
+DNS, scenario accounts, rights, Wazuh — takes about **30 minutes**.
+The existing automation (`make up` + `make provision` +
+`install-agents.yml`) works well technically (0 Ansible failures over
+the whole successful run, apart from the 2 upstream infrastructure problems),
+but it **assumes an environment already in its initial state**: it does not
+handle reopening the management network after a previous isolation,
+and it is sensitive to the re-enumeration of network interfaces
+after Sysprep. These are two real limits of the automation, not
+one-off failures of the lab.
 
-Séance consacrée à la finalisation : rapport de pentest, guide de détection,
-rapports d'avancement, bilan et retour d'expérience, puis publication.
+Session devoted to finalisation: pentest report, detection guide,
+progress reports, review and lessons learned, then publication.
 
-## Difficultés et décisions
+## Difficulties and decisions
 
-| Difficulté | Décision et résultat |
+| Difficulty | Decision and result |
 | --- | --- |
-| GOAD à adapter pour KVM/libvirt | Adaptation locale de MINILAB à deux machines pour respecter les ressources disponibles |
-| Image Windows 10 expirée, arrêts automatiques | WS01 recréé sous Windows Server 2019 |
-| Mauvaise découverte de l’interface réseau | Calcul des interfaces par hôte au lieu d’un résultat partagé avec `run_once` |
-| Identité Windows identique entre les clones | Généralisation de WS01 avec Sysprep, puis jonction au domaine |
-| Découverte du domaine mal initialisée au démarrage | Relance de la découverte sur WS01 ; démarrage de DC01 avant WS01 et validation explicite |
-| Horloges Windows décalées | Correction UTC ; distinction entre heure du test, heure Windows et réception Wazuh |
-| Absence de captures originales des 12 et 13 | Suivi écrit conservé ; captures techniques disponibles à partir du 14 |
-| Préparation terminée le 13 au lieu du 12 | Prioriser un scénario court, documenté et corrélé à Wazuh avant le 16 |
-| `wmiexec` bloqué sur l'appel DCOM malgré un port RPC ouvert | Repli sur `smbexec`/`psexec` (SMB uniquement) ; la création et le démarrage réussis de services en LocalSystem suffisent à prouver l'exécution de code, même sans récupérer la sortie de la commande |
-| Sortie des commandes distantes non récupérable côté client (blocage sur le canal de sortie) | Preuve basée sur les journaux Windows et Wazuh plutôt que sur la sortie texte de l'outil ; résultat non affecté |
-| Réseau lab mal réassigné après Sysprep de WS01 (IP link-local au lieu de 192.168.56.31) | Diagnostic via les adaptateurs réseau réels, correction manuelle de l'IP, cause probable : ré-énumération non déterministe des cartes après Sysprep |
-| Réseau de management resté isolé (sans NAT) après une isolation précédente, bloquant le provisioning (besoin d'Internet pour PowerShellGet) | Réactivation temporaire du NAT depuis la définition d'origine du dépôt, **avec autorisation explicite demandée avant modification réseau** ; réseaux ré-isolés en fin de reconstruction via `isolate.sh` |
+| GOAD to adapt for KVM/libvirt | Local adaptation of MINILAB to two machines to respect the available resources |
+| Expired Windows 10 image, automatic shutdowns | WS01 recreated on Windows Server 2019 |
+| Wrong network interface discovery | Interfaces computed per host instead of a result shared with `run_once` |
+| Identical Windows identity between clones | Generalisation of WS01 with Sysprep, then domain join |
+| Domain discovery badly initialised at startup | Discovery relaunched on WS01; DC01 started before WS01 and explicit validation |
+| Windows clocks off | UTC correction; distinction between test time, Windows time and Wazuh receipt |
+| No original screenshots of the 12th and 13th | Written follow-up kept; technical screenshots available from the 14th |
+| Preparation finished on the 13th instead of the 12th | Prioritise a short scenario, documented and correlated with Wazuh before the 16th |
+| `wmiexec` blocked on the DCOM call despite an open RPC port | Fallback to `smbexec`/`psexec` (SMB only); the successful creation and start of LocalSystem services is enough to prove code execution, even without retrieving the command output |
+| Remote command output not retrievable on the client side (blocking on the output channel) | Proof based on the Windows and Wazuh logs rather than on the tool's text output; result unaffected |
+| Lab network wrongly reassigned after WS01's Sysprep (link-local IP instead of 192.168.56.31) | Diagnosis via the real network adapters, manual IP fix, probable cause: non-deterministic re-enumeration of the cards after Sysprep |
+| Management network left isolated (no NAT) after a previous isolation, blocking provisioning (Internet needed for PowerShellGet) | Temporary re-enabling of NAT from the repository's original definition, **with explicit authorisation requested before the network change**; networks re-isolated at the end of the rebuild via `isolate.sh` |
 
-## Prochaines étapes
+## Next steps
 
-- [x] Installer et vérifier le lab isolé.
-- [x] Recevoir de vrais événements Wazuh depuis les deux machines.
-- [x] Réaliser une première reconnaissance des services.
-- [x] Vérifier une première faiblesse et corréler la connexion dans Wazuh.
-- [x] Publier le suivi et les quatre captures techniques dans cette documentation.
-- [x] Vérifier les privilèges de `bob` sur WS01 : exécution de code en LocalSystem confirmée (mouvement latéral).
-- [x] Obtenir la compromission du domaine (DCSync avec `alice`, réplication limitée à `administrator`).
-- [x] Relier chaque technique aux traces ou alertes, y compris un écart de détection documenté (4688 collecté mais non corrélé).
-- [x] Rédiger le rapport de pentest et le guide de détection.
-- [x] Compléter les rapports d’avancement, le bilan et le retour d’expérience.
-- [x] Compléter la cartographie du domaine (BloodHound) — faite, finding F5 sur l'écart outillage/réalité.
-- [x] Vérifier la reconstruction complète depuis zéro — faite : **échoue à atteindre les 15 minutes** (47m59s réels, 2 échecs corrigés en direct), cf. section dédiée ci-dessus.
-- [ ] Publier les livrables sur le portfolio.
+- [x] Install and verify the isolated lab.
+- [x] Receive real Wazuh events from both machines.
+- [x] Carry out a first reconnaissance of the services.
+- [x] Verify a first weakness and correlate the logon in Wazuh.
+- [x] Publish the follow-up and the four technical screenshots in this documentation.
+- [x] Verify `bob`'s privileges on WS01: LocalSystem code execution confirmed (lateral movement).
+- [x] Achieve the domain compromise (DCSync with `alice`, replication limited to `administrator`).
+- [x] Link each technique to traces or alerts, including a documented detection gap (4688 collected but not correlated).
+- [x] Write the pentest report and the detection guide.
+- [x] Complete the progress reports, the review and the lessons learned.
+- [x] Complete the domain mapping (BloodHound) — done, finding F5 on the tooling/field-reality gap.
+- [x] Verify the complete rebuild from scratch — done: **fails to reach 15 minutes** (47m59s actual, 2 failures fixed live), see the dedicated section above.
+- [ ] Publish the deliverables on the portfolio.
 
-**À consigner par le porteur du projet :** temps réellement travaillé chaque jour,
-explication des résultats et des limites, décisions prises et bilan personnel.
+**To be recorded by the project owner:** time actually worked each day,
+explanation of the results and limits, decisions taken and personal review.
 
-Pour chaque prochaine étape importante, ajouter ici une capture prise pendant
-l’action, sa date, la machine, l’outil et le résultat observé. Les erreurs,
-corrections et résultats négatifs font aussi partie du suivi.
+For each important next step, add here a screenshot taken during
+the action, its date, the machine, the tool and the observed result. Errors,
+fixes and negative results are also part of the follow-up.
 
-## Documents utiles et sources
+## Useful documents and sources
 
-Le suivi et toutes les captures sont regroupés sur cette page. Les documents
-suivants servent à cadrer le projet ou à utiliser le lab :
+The follow-up and all the screenshots are gathered on this page. The following
+documents serve to frame the project or to use the lab:
 
-- [Cahier des charges](./cahier-des-charges.md) : objectifs, périmètre, budget et grille d’évaluation.
-- [Rapport de pentest](./rapport-pentest.md) : résumé exécutif, findings notés CVSS, recommandations.
-- [Playbook de détection](./playbook-detection.md) : mapping technique d’attaque → règle Wazuh.
-- [Guide d’installation et commandes](./kvm/README.md) : exploitation technique du lab.
-- [Scénario de test](./kvm/SCENARIO.md) : techniques prévues et détections attendues.
+- [Project specification](./cahier-des-charges.md): objectives, scope, budget and evaluation grid.
+- [Pentest report](./rapport-pentest.md): executive summary, CVSS-rated findings, recommendations.
+- [Detection playbook](./playbook-detection.md): attack technique → Wazuh rule mapping.
+- [Installation and commands guide](./kvm/README.md): technical operation of the lab.
+- [Test scenario](./kvm/SCENARIO.md): planned techniques and expected detections.
 
-### Reproduction et fichiers sources
+### Reproduction and source files
 
-Le script [`initial-enumeration.py`](./kvm/scripts/initial-enumeration.py) reproduit
-la lecture LDAP et l’unique connexion SMB. Il lit le compte de départ dans la
-configuration du scénario GOAD, sans afficher ni exporter le mot de passe découvert.
-La dépendance `pycryptodome==3.24.1` fournit le module `Crypto` utilisé pour NTLM
-([documentation officielle](https://www.pycryptodome.org/src/installation)).
+The script [`initial-enumeration.py`](./kvm/scripts/initial-enumeration.py) reproduces
+the LDAP read and the single SMB connection. It reads the starting account from the
+GOAD scenario configuration, without displaying or exporting the discovered password.
+The `pycryptodome==3.24.1` dependency provides the `Crypto` module used for NTLM
+([official documentation](https://www.pycryptodome.org/src/installation)).
 
-Les résultats Nmap, les horodatages et les exports détaillés de cette séance
-restent localement dans `kvm/logs/2026-10-14/`, exclus de Git. Les validations
-locales utilisent aussi `health.json`, `domain-validation.json` et
-`alert-evidence.json`. Les secrets d’enrôlement, images de VM, mots de passe et
-journaux bruts ne sont pas publiés. Les métadonnées d’alertes sont exportées par
-une sélection explicite de champs.
+The Nmap results, timestamps and detailed exports of this session
+stay locally in `kvm/logs/2026-10-14/`, excluded from Git. The local validations
+also use `health.json`, `domain-validation.json` and
+`alert-evidence.json`. Enrolment secrets, VM images, passwords and
+raw logs are not published. Alert metadata is exported through
+an explicit selection of fields.
 
-La séance du 15 octobre (mouvement latéral et DCSync) suit la même logique :
-détails et horodatages dans `kvm/logs/2026-10-15/jeudi-synthese.json`, exclus de
-Git. Les hash et clés extraits par le DCSync ne sont conservés que localement.
+The session of 15 October (lateral movement and DCSync) follows the same logic:
+details and timestamps in `kvm/logs/2026-10-15/jeudi-synthese.json`, excluded from
+Git. The hashes and keys extracted by the DCSync are only kept locally.
 
-### Dates et intégrité des captures
+### Screenshot dates and integrity
 
-- [Manifeste des quatre captures directes du 14](./screenshots/2026-10-14/manifest-directes.json) :
-  machine, logiciel, heure UTC et empreinte SHA-256.
-- [Manifeste de la capture du 15](./screenshots/2026-10-15/manifest-directes.json) :
-  mouvement latéral sur WS01.
+- [Manifest of the four direct screenshots of the 14th](./screenshots/2026-10-14/manifest-directes.json):
+  machine, software, UTC time and SHA-256 fingerprint.
+- [Manifest of the screenshot of the 15th](./screenshots/2026-10-15/manifest-directes.json):
+  lateral movement on WS01.
 
-Les originaux des traces sont figés dans les archives locales. Une empreinte
-permet de vérifier l’intégrité d’un fichier ; elle ne certifie pas sa date.
+The originals of the traces are frozen in the local archives. A fingerprint
+makes it possible to verify the integrity of a file; it does not certify its date.

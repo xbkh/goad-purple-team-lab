@@ -1,11 +1,11 @@
-# Fixtures synthétiques
+# Synthetic fixtures
 
-Ces JSON sont des exemples artificiels, pas des événements émis par le lab.
-Le moteur `wazuh-logtest` 4.14.0 les décode comme JSON, tandis que les règles
-Windows sont rattachées au décodeur interne `windows_eventchannel`.
-Les essais JSON seuls n'ont donc pas validé les règles 100100–100102.
+These JSON files are artificial examples, not events emitted by the lab.
+The `wazuh-logtest` 4.14.0 engine decodes them as JSON, whereas the Windows
+rules are attached to the internal `windows_eventchannel` decoder.
+The JSON-only tests therefore did not validate rules 100100–100102.
 
-Validation restante : observer les événements réels des agents Windows avec
-leur identifiant, l'heure, le compte et l'adresse source, puis vérifier les
-alertes dans `/var/ossec/logs/alerts/alerts.json`.
-Ne pas utiliser ces fixtures comme preuve de détection d'une attaque.
+Remaining validation: observe the real events from the Windows agents with
+their ID, time, account and source address, then check the
+alerts in `/var/ossec/logs/alerts/alerts.json`.
+Do not use these fixtures as proof of the detection of an attack.
