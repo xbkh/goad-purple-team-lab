@@ -1,4 +1,14 @@
-# GOAD Purple Team Lab
+<div align="center">
+
+<img src="https://capsule-render.vercel.app/api?type=waving&color=0:000000,100:0d6efd&height=200&section=header&text=GOAD%20Purple%20Team%20Lab&fontColor=ffffff&fontSize=60&fontAlignY=38&desc=Active%20Directory%20pentest%20and%20Wazuh%20detection&descAlignY=60&descSize=18" alt="GOAD Purple Team Lab" width="100%">
+
+![Active Directory](https://img.shields.io/badge/Active%20Directory-0d6efd?style=for-the-badge&logoColor=4DA6FF&labelColor=000000)
+![Wazuh](https://img.shields.io/badge/Wazuh-0d6efd?style=for-the-badge&logoColor=4DA6FF&labelColor=000000)
+![KVM](https://img.shields.io/badge/KVM%20/%20libvirt-0d6efd?style=for-the-badge&logo=linux&logoColor=4DA6FF&labelColor=000000)
+![Docker](https://img.shields.io/badge/Docker-0d6efd?style=for-the-badge&logo=docker&logoColor=4DA6FF&labelColor=000000)
+![Purple team](https://img.shields.io/badge/Purple%20team-0d6efd?style=for-the-badge&logoColor=4DA6FF&labelColor=000000)
+
+</div>
 
 **Project log, results and screenshots — 12 to 16 October 2026.**
 
